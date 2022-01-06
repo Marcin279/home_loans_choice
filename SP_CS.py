@@ -1,1 +1,0 @@
-## Metoda Safety Principles
