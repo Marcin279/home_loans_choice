@@ -6,9 +6,9 @@ from numpy.linalg import norm
 import math
 from data_processing import *
 
-A1_point = Point(2,1,1)
-u = Point(5,5,5)
-A2_point = Point(11,11,9)
+A1_point = Point([2,1,1])
+u = Point([5,5,5])
+A2_point = Point([11,11,9])
 
 class SP_CS:
     def __init__(self):
@@ -32,8 +32,8 @@ def krzywa_woronoya(A1_point,A2_point):
     for i in range(A1_point.len):
         f1.append(A1_point.cor[i]+d)
         f2.append(A2_point.cor[i]-d)
-    f1 = Point(*f1)
-    f2 = Point(*f2)
+    f1 = Point(f1)
+    f2 = Point(f2)
     return (A1_point,f1,f2,A2_point)
 
 def odleglosc_od_prostej(u,A1_odc, A2_odc):
@@ -85,15 +85,59 @@ def sprawdz_czy_punkt_u_w_odcinku_AB(u, point_1, point_2):
     return result
 
 def point_on_line(u, a, b):
-    # au = u.cor - a.cor
-    # ab = b.cor - a.cor
-    # t = np.dot(au, ab) / np.dot(ab, ab)
-    # # if you need the the closest point belonging to the segment
-    # t = max(0, min(1, t))
-    # # print('ab', ab, 'au', au, 't', t)
-    # result = a.cor + t * ab
-    # return result
-    pass
+    au = np.array(u.cor) - np.array(a.cor)
+    ab = np.array(b.cor) - np.array(a.cor)
+    t = np.dot(au, ab) / np.dot(ab, ab)
+    # if you need the the closest point belonging to the segment
+    t = max(0, min(1, t))
+    # print('ab', ab, 'au', au, 't', t)
+    result = a.cor + t * ab
+    return result
+
+def oblicz_odleglosc(u, A1_point, A2_point):
+    """
+    Funkcja obliczająca odległości pomiędzy punktem a wszystkimi prostymi.
+
+    params: -u: Tuple(int, int)
+            -A1_point: Tuple(int, int)
+            -A2_point: Tuple(int, int)
+
+    Return: Tuple(float, int)
+    """
+    A1_point, f1, f2, A2_point = krzywa_woronoya(A1_point,A2_point)
+    # print("f1",f1.cor)
+    # print("f2",f2.cor)
+    # print(A1_point, f1, f2, A2_point)
+ 
+
+    # https://stackoverflow.com/questions/39840030/distance-between-point-and-a-line-from-two-points
+    
+    # u = np.asarray(u)
+    # f1 = np.asarray(f1)
+    # f2 = np.asarray(f2)
+    # A1_point = np.asarray(A1_point)
+    # A2_point = np.asarray(A2_point)
+    d1 = np.Inf
+    d2 = np.Inf
+    d3 = np.Inf
+    # Odleglosc u od prostej A1_point, f1
+    # d1 = norm(np.cross(f1-A1_point, A1_point-u))/norm(A1_point-u)
+    # print("A1_point-f1", sprawdz_czy_punkt_u_w_odcinku_AB(u, A1_point, f1))
+    if sprawdz_czy_punkt_u_w_odcinku_AB(u, A1_point, f1):
+        d1 = odleglosc_od_prostej(u, A1_point, f1)
+    # Odleglosc u od prostej f1, f2
+    # d2 = norm(np.cross(f2-f1, f1-u))/norm(f1-u)
+    if sprawdz_czy_punkt_u_w_odcinku_AB(u, f1, f2):
+        d2 = odleglosc_od_prostej(u, f1, f2)
+    # print("f1-f2", sprawdz_czy_punkt_u_w_odcinku_AB(u, f1, f2))
+    # Odleglosc u od prostej f2, A2_point
+    # d3 = norm(np.cross(A2_point-f2, f2-u))/norm(f2-u)
+    if sprawdz_czy_punkt_u_w_odcinku_AB(u, f2, A2_point):
+        d3 = odleglosc_od_prostej(u, f2, A2_point)
+    # print("f2-A2_point", sprawdz_czy_punkt_u_w_odcinku_AB(u, f2, A2_point))
+
+    lst_of_d = [d1, d2, d3]
+    return min(d1, d2, d3), lst_of_d.index(min(lst_of_d))
 
 ob = krzywa_woronoya(A1_point,A2_point)
 x = []
@@ -113,17 +157,20 @@ ax.plot3D(x, y, z, 'gray')
 ax.scatter3D(x, y, z, c=z, cmap='brg')
 plt.show()
 
-# a = Point(1,1,1,1)
-# b = Point(7,1,1,1)
-# c = Point(4,5,1,1)
-a = Point(1,1,1)
-b = Point(7,1,1)
-c = Point(4,4,1)
+# a = Point([1,1,1,1])
+# b = Point([7,1,1,1])
+# c = Point([4,5,1,1])
+a = Point([1,5,1])
+b = Point([7,1,4])
+c = Point([4,4,1])
 
-print(odleglosc_od_prostej(c,a,b))
+# print(odleglosc_od_prostej(c,a,b))
 
-print(oblicz_dlugosc_odcinka(a,b))
+# print(oblicz_dlugosc_odcinka(a,b))
 
-print(sprawdz_czy_punkt_u_w_odcinku_AB(c,a,b))
+# print(sprawdz_czy_punkt_u_w_odcinku_AB(c,a,b))
 
-print(point_on_line(c,a,b))
+# print(point_on_line(c,a,b))
+
+print(oblicz_odleglosc(c, a, b))
+
