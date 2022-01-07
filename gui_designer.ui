@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface version="1.1">
+  <object class="tk.Frame" id="window">
+    <property name="height">720</property>
+    <property name="width">1280</property>
+    <layout manager="pack">
+      <property name="padx">40</property>
+      <property name="pady">20</property>
+      <property name="propagate">True</property>
+      <property name="side">top</property>
+    </layout>
+    <child>
+      <object class="tk.LabelFrame" id="labelframe1">
+        <property name="height">200</property>
+        <property name="text" translatable="yes">labelframe1</property>
+        <property name="width">200</property>
+        <layout manager="grid">
+          <property name="column">0</property>
+          <property name="padx">20</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+        <child>
+          <object class="tk.Label" id="label3">
+            <property name="text" translatable="yes">label3</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton3">
+            <property name="text" translatable="yes">checkbutton3</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton4">
+            <property name="text" translatable="yes">checkbutton4</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton5">
+            <property name="text" translatable="yes">checkbutton5</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton6">
+            <property name="text" translatable="yes">checkbutton6</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton7">
+            <property name="text" translatable="yes">checkbutton7</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton8">
+            <property name="text" translatable="yes">checkbutton8</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton9">
+            <property name="text" translatable="yes">checkbutton9</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton10">
+            <property name="text" translatable="yes">checkbutton10</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton11">
+            <property name="text" translatable="yes">checkbutton11</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Checkbutton" id="checkbutton12">
+            <property name="text" translatable="yes">checkbutton12</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="tk.LabelFrame" id="labelframe2">
+        <property name="height">200</property>
+        <property name="text" translatable="yes">labelframe2</property>
+        <property name="width">200</property>
+        <layout manager="grid">
+          <property name="column">1</property>
+          <property name="padx">20</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+        <child>
+          <object class="tk.Label" id="label4">
+            <property name="text" translatable="yes">label4</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="radiobutton23">
+            <property name="text" translatable="yes">radiobutton23</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="radiobutton24">
+            <property name="text" translatable="yes">radiobutton24</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="radiobutton25">
+            <property name="text" translatable="yes">radiobutton25</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="radiobutton26">
+            <property name="text" translatable="yes">radiobutton26</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="tk.LabelFrame" id="labelframe3">
+        <property name="height">200</property>
+        <property name="text" translatable="yes">labelframe3</property>
+        <property name="width">200</property>
+        <layout manager="grid">
+          <property name="column">2</property>
+          <property name="padx">20</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+      </object>
+    </child>
+  </object>
+</interface>

@@ -1,0 +1,76 @@
+import pathlib
+import tkinter as tk
+import tkinter.ttk as ttk
+
+PROJECT_PATH = pathlib.Path(__file__).parent
+PROJECT_UI = PROJECT_PATH / "newproject"
+
+
+class NewprojectWidget(tk.Frame):
+    def __init__(self, master=None, **kw):
+        super(NewprojectWidget, self).__init__(master, **kw)
+        self.labelframe1 = tk.LabelFrame(self)
+        self.label3 = tk.Label(self.labelframe1)
+        self.label3.configure(text='label3')
+        self.label3.pack(side='top')
+        self.checkbutton3 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton3.configure(text='checkbutton3')
+        self.checkbutton3.pack(side='top')
+        self.checkbutton4 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton4.configure(text='checkbutton4')
+        self.checkbutton4.pack(side='top')
+        self.checkbutton5 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton5.configure(text='checkbutton5')
+        self.checkbutton5.pack(side='top')
+        self.checkbutton6 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton6.configure(text='checkbutton6')
+        self.checkbutton6.pack(side='top')
+        self.checkbutton7 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton7.configure(text='checkbutton7')
+        self.checkbutton7.pack(side='top')
+        self.checkbutton8 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton8.configure(text='checkbutton8')
+        self.checkbutton8.pack(side='top')
+        self.checkbutton9 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton9.configure(text='checkbutton9')
+        self.checkbutton9.pack(side='top')
+        self.checkbutton10 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton10.configure(text='checkbutton10')
+        self.checkbutton10.pack(side='top')
+        self.checkbutton11 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton11.configure(text='checkbutton11')
+        self.checkbutton11.pack(side='top')
+        self.checkbutton12 = tk.Checkbutton(self.labelframe1)
+        self.checkbutton12.configure(text='checkbutton12')
+        self.checkbutton12.pack(side='top')
+        self.labelframe1.configure(height='200', text='labelframe1', width='200')
+        self.labelframe1.grid(column='0', padx='20', row='0')
+        self.labelframe2 = tk.LabelFrame(self)
+        self.label4 = tk.Label(self.labelframe2)
+        self.label4.configure(text='label4')
+        self.label4.pack(side='top')
+        self.radiobutton23 = tk.Radiobutton(self.labelframe2)
+        self.radiobutton23.configure(text='radiobutton23')
+        self.radiobutton23.pack(side='top')
+        self.radiobutton24 = tk.Radiobutton(self.labelframe2)
+        self.radiobutton24.configure(text='radiobutton24')
+        self.radiobutton24.pack(side='top')
+        self.radiobutton25 = tk.Radiobutton(self.labelframe2)
+        self.radiobutton25.configure(text='radiobutton25')
+        self.radiobutton25.pack(side='top')
+        self.radiobutton26 = tk.Radiobutton(self.labelframe2)
+        self.radiobutton26.configure(text='radiobutton26')
+        self.radiobutton26.pack(side='top')
+        self.labelframe2.configure(height='200', text='labelframe2', width='200')
+        self.labelframe2.grid(column='1', padx='20', row='0')
+        self.labelframe3 = tk.LabelFrame(self)
+        self.labelframe3.configure(height='200', text='labelframe3', width='200')
+        self.labelframe3.grid(column='2', padx='20', row='0')
+
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    widget = NewprojectWidget(root)
+    widget.pack(expand=True, fill='both')
+    root.mainloop()
+
