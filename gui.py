@@ -4,6 +4,8 @@ import tkinter as tk
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+# import matplotlib
+# matplotlib.use('TkAgg')
 from typing import List, Tuple, Optional, Union, Dict
 
 
@@ -11,17 +13,38 @@ from typing import List, Tuple, Optional, Union, Dict
 # PROJECT_UI = PROJECT_PATH / "gui_designer.ui"
 
 class Point:
-    def __init__(self, x, y):
+    def __init__(self, x, y, a=None):
         self.x = x
         self.y = y
+        self.a = a
+        # self.b = None
+        # self.c = None
+        # self.d = None
+        # self.e = None
+        # self.f = None
+        # self.g = None
+        # self.h = None
+
+    def __repr__(self):
+        if self.a is not None:
+            return f'{self.x}, {self.y}, {self.a}'
+        return f'{self.x}; {self.y}'
 
 
-def generete_data():
+def generete_data(dim3=False):
     dct = {}
-    x = [np.random.randint(0, 20) for _ in range(10)]
-    y = [np.random.randint(0, 20) for _ in range(10)]
     lst_name = [f'Point{i}' for i in range(10)]
-    lst = [Point(x[i], y[i]) for i in range(len(x))]
+    if not dim3:
+        x = [np.random.randint(0, 20) for _ in range(10)]
+        y = [np.random.randint(0, 20) for _ in range(10)]
+
+        lst = [Point(x[i], y[i]) for i in range(len(x))]
+    else:
+        x = [np.random.randint(0, 20) for _ in range(10)]
+        y = [np.random.randint(0, 20) for _ in range(10)]
+        a = [np.random.randint(0, 20) for _ in range(10)]
+
+        lst = [Point(x[i], y[i], a[i]) for i in range(len(x))]
     for i in range(len(lst)):
         dct[lst_name[i]] = lst[i]
     return dct
@@ -162,7 +185,6 @@ class GuiDesignerApp:
 
     def plot_2d(self, data):
         """
-        test fuction to plot bar
         args: data: List[Point]
         :return:
         """
@@ -177,17 +199,40 @@ class GuiDesignerApp:
         figure1.show()
         return figure1
 
+    def plot_3d(self, data):
+        figure1 = plt.figure(figsize=(6, 4), dpi=100)
+        ax1 = plt.axes(projection="3d")
+
+        x = [elem.x for p, elem in data.items()]
+        y = [elem.y for p, elem in data.items()]
+        z = [elem.a for p, elem in data.items()]
+        key_lst = list(data.keys())
+
+        for i in range(len(x)):
+            ax1.scatter(x[i], y[i], z[i], color='b')
+            ax1.text(x[i], y[i], z[i], (key_lst[i]), size=8, zorder=1)
+
+        figure1.show()
+        return figure1
+
     def plot_values(self, data):
-        self.figure = self.plot_2d(data)
+        if data['Point0'].a is None:
+            self.figure = self.plot_2d(data)
+        else:
+            self.figure = self.plot_3d(data)
+
         chart = FigureCanvasTkAgg(self.figure, self.labelframe3)
         self.print_ranking(data)
         chart.get_tk_widget().pack()
 
     def reformat_ranking(self, data):
         S = ''
-        data = self.data_RSM
-        for point_name, elem in data.items():
-            S += f'{point_name}: ({elem.x}, {elem.y})\n'
+        if data['Point0'].a is None:
+            for point_name, elem in data.items():
+                S += f'{point_name}: ({elem.x}, {elem.y})\n'
+        else:
+            for point_name, elem in data.items():
+                S += f'{point_name}: ({elem.x}, {elem.y}, {elem.a})\n'
         return S
 
     def print_ranking(self, data):
@@ -208,9 +253,10 @@ class GuiDesignerApp:
 if __name__ == '__main__':
     root = tk.Tk()
     dataRSM = generete_data()
-    dataSPCS = generete_data()
+    dataSPCS = generete_data(dim3=True)
     dataTopsis = generete_data()
     app = GuiDesignerApp(root, data_RSM=dataRSM, data_SP_CS=dataSPCS, data_TOPSIS=dataTopsis)
-
+    # print(app.data_RSM)
+    # app.plot_3d(dataSPCS)
+    # print(dataSPCS.keys())
     app.run()
-
