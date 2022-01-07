@@ -4,7 +4,7 @@ import tkinter as tk
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import tkinter.ttk as ttk
+from typing import List, Tuple, Optional, Union, Dict
 
 
 # PROJECT_PATH = pathlib.Path(__file__).parent
@@ -16,11 +16,44 @@ class Point:
         self.y = y
 
 
+def generete_data():
+    dct = {}
+    x = [np.random.randint(0, 20) for _ in range(10)]
+    y = [np.random.randint(0, 20) for _ in range(10)]
+    lst_name = [f'Point{i}' for i in range(10)]
+    lst = [Point(x[i], y[i]) for i in range(len(x))]
+    for i in range(len(lst)):
+        dct[lst_name[i]] = lst[i]
+    return dct
+
+
 class GuiDesignerApp:
-    def __init__(self, master=None):
+    def __init__(self, master=None, data_RSM=None, data_TOPSIS=None, data_SP_CS=None):
         # build ui
+        self.data_RSM: Optional[Dict[str, List[Point]], None] = data_RSM
+        self.data_TOPSIS: Optional[Dict[str, List[Point]], None] = data_TOPSIS
+        self.data_SP_CS: Optional[Dict[str, List[Point]], None] = data_SP_CS
+
+        self.string_to_ranking: Optional[str, None] = None
+
         self.figure = None
+
         self.window = tk.Frame(master)
+        self.wybor_kryteriow = None
+        self.wybor_metody = None
+        self.labelframe1 = None
+        self.labelframe2 = None
+        self.labelframe3 = None
+        self.labelframe4 = None
+        # self.label3 = None
+
+        self.window.configure(height='900', width='1600')
+        self.window.pack(padx='40', pady='20', side='top')
+
+        # Main widget
+        self.mainwindow = self.window
+
+    def create_ui_main(self):
         self.wybor_kryteriow = tk.LabelFrame(self.window)
         self.label3 = tk.Label(self.wybor_kryteriow)
         self.label3.configure(text='label3')
@@ -80,76 +113,104 @@ class GuiDesignerApp:
         self.wybor_metody.grid(column='1', padx='5', pady='5', row='1', sticky='n')
 
         self.labelframe1 = tk.LabelFrame(self.window)
+
         self.text4 = tk.Text(self.labelframe1)
         self.text4.configure(blockcursor='false', height='10', relief='flat', takefocus=False)
         self.text4.configure(width='20')
         self.text4.grid(column='2', row='2', sticky='nw')
+
         self.labelframe1.configure(height='200', text='ranking', width='100')
         self.labelframe1.grid(column='2', row='1', sticky='n')
         self.labelframe2 = tk.LabelFrame(self.window)
         self.button2 = tk.Button(self.labelframe2)
         self.button2.configure(text='Dane')
         self.button2.pack(side='left')
-        self.button3 = tk.Button(self.labelframe2, text='RSM')
-        self.button3.configure(text='RSM', command=self.plot_values)
 
+        self.button3 = tk.Button(self.labelframe2, text='RSM')
+        self.button3.configure(command=lambda: self.plot_values(self.data_RSM))
         self.button3.pack(side='left')
-        self.button6 = tk.Button(self.labelframe2)
-        self.button6.configure(text='SP-CS')
+
+        self.button6 = tk.Button(self.labelframe2, text='SP-CS')
+        self.button6.configure(command=lambda: self.plot_values(self.data_SP_CS))
         self.button6.pack(side='left')
-        self.button7 = tk.Button(self.labelframe2)
-        self.button7.configure(text='TOPSIS')
-        self.button7.pack(side='top')
+
+        self.button7 = tk.Button(self.labelframe2, text='TOPSIS')
+        self.button7.configure(command=lambda: self.plot_values(self.data_TOPSIS))
+        self.button7.pack(side='left')
+
+        self.refresh_button = tk.Button(self.labelframe2, text='Refresh')
+        self.refresh_button.configure(command=self.refresh)
+        self.refresh_button.pack(side='left')
+
         self.labelframe2.configure(height='200', text='MENU', width='200')
         self.labelframe2.grid(column='0', row='0', sticky='n')
         self.labelframe3 = tk.LabelFrame(self.window)
+
         self.labelframe3.configure(height='300', text='Wykres', width='300')
         self.labelframe3.grid(column='1', padx='10', pady='10', row='2')
+
         self.labelframe4 = tk.LabelFrame(self.window)
         self.button8 = tk.Button(self.labelframe4)
         self.button8.configure(cursor='arrow', font='{Arial CE} 12 {bold}', text='Licz')
         self.button8.pack(side='top')
         self.labelframe4.configure(height='200', width='200')
         self.labelframe4.grid(column='1', row='3')
-        self.window.configure(height='900', width='1600')
-        self.window.pack(padx='40', pady='20', side='top')
-
-        # Main widget
-        self.mainwindow = self.window
-        print(self.wybor_kryteriow)
-        print(self.wybor_metody)
 
     def run(self):
+        self.create_ui_main()
         self.mainwindow.mainloop()
 
-    def plot_2d(self, data=None):
+    def plot_2d(self, data):
         """
         test fuction to plot bar
+        args: data: List[Point]
         :return:
         """
         figure1, ax1 = plt.subplots(figsize=(5, 3), dpi=100)
-        # ax1 = figure1.add_subplot()
-        # bar1 = FigureCanvasTkAgg(figure1, )
-        # self.figure = figure1
-        x = [i for i in range(10)]
-        y = [2 * i for i in range(10)]
+        # data: Dict[str, Point] = self.data_RSM
+
+        x = [elem.x for p, elem in data.items()]
+        y = [elem.y for p, elem in data.items()]
         ax1.scatter(x, y)
+        for key, coords in data.items():
+            ax1.annotate(key, (coords.x, coords.y))
         figure1.show()
         return figure1
 
-    def plot_values(self):
-        self.figure = self.plot_2d()
-        # self.labelframe3.destroy()
-        # frame = tk.LabelFrame(self.)
+    def plot_values(self, data):
+        self.figure = self.plot_2d(data)
         chart = FigureCanvasTkAgg(self.figure, self.labelframe3)
+        self.print_ranking(data)
         chart.get_tk_widget().pack()
 
-    def click_RSM(self, data):
+    def reformat_ranking(self, data):
+        S = ''
+        data = self.data_RSM
+        for point_name, elem in data.items():
+            S += f'{point_name}: ({elem.x}, {elem.y})\n'
+        return S
 
+    def print_ranking(self, data):
+        self.string_to_ranking = self.reformat_ranking(data)
+        self.text4.insert(tk.INSERT, self.string_to_ranking)
+
+    def refresh(self):
+        self.wybor_kryteriow.destroy()
+        self.wybor_metody.destroy()
+        self.labelframe3.destroy()
+        self.labelframe2.destroy()
+        self.labelframe1.destroy()
+        self.labelframe4.destroy()
+
+        self.create_ui_main()
 
 
 if __name__ == '__main__':
     root = tk.Tk()
-    app = GuiDesignerApp(root)
+    dataRSM = generete_data()
+    dataSPCS = generete_data()
+    dataTopsis = generete_data()
+    app = GuiDesignerApp(root, data_RSM=dataRSM, data_SP_CS=dataSPCS, data_TOPSIS=dataTopsis)
+
     app.run()
-    # app.plot_bar()
+
