@@ -13,6 +13,9 @@ from typing import List, Tuple, Optional, Union, Dict
 # PROJECT_UI = PROJECT_PATH / "gui_designer.ui"
 
 class Point:
+    """
+    class representing Point
+    """
     def __init__(self, x, y, a=None):
         self.x = x
         self.y = y
@@ -77,6 +80,13 @@ class GuiDesignerApp:
         self.mainwindow = self.window
 
     def create_ui_main(self):
+        """
+        This Function create all LabelFrames in gui app
+
+
+        :return:
+        """
+        # Część kodu odpowiadająca za wybór kryteriów
         self.wybor_kryteriow = tk.LabelFrame(self.window)
         self.label3 = tk.Label(self.wybor_kryteriow)
         self.label3.configure(text='label3')
@@ -114,6 +124,7 @@ class GuiDesignerApp:
         self.wybor_kryteriow.configure(height='50', text='wybor_kryteriow', width='40')
         self.wybor_kryteriow.grid(column='0', padx='5', pady='5', row='1', sticky='n')
 
+        # częśc kodu odpowiadająca za wybór metody
         self.wybor_metody = tk.LabelFrame(self.window)
         self.label4 = tk.Label(self.wybor_metody)
         self.label4.configure(text='label4')
@@ -135,6 +146,7 @@ class GuiDesignerApp:
         self.wybor_metody.configure(height='50', relief='raised', text='wybor_metody', width='25')
         self.wybor_metody.grid(column='1', padx='5', pady='5', row='1', sticky='n')
 
+        # Ta część kodu odopowiada za przełączenie się na wybrany ekran metody
         self.labelframe1 = tk.LabelFrame(self.window)
 
         self.text4 = tk.Text(self.labelframe1)
@@ -180,11 +192,16 @@ class GuiDesignerApp:
         self.labelframe4.grid(column='1', row='3')
 
     def run(self):
+        """
+        Run application
+        :return:
+        """
         self.create_ui_main()
         self.mainwindow.mainloop()
 
-    def plot_2d(self, data):
+    def plot_2d(self, data: Dict[str, Point]):
         """
+        Plot 2 dimensional chart
         args: data: List[Point]
         :return:
         """
@@ -199,7 +216,12 @@ class GuiDesignerApp:
         figure1.show()
         return figure1
 
-    def plot_3d(self, data):
+    def plot_3d(self, data: Dict[str, Point]):
+        """
+        Plot 3 dimensional chart
+        :param data:
+        :return:
+        """
         figure1 = plt.figure(figsize=(6, 4), dpi=100)
         ax1 = plt.axes(projection="3d")
 
@@ -216,6 +238,14 @@ class GuiDesignerApp:
         return figure1
 
     def plot_values(self, data):
+        """
+        Function to plot chart by type of chart
+        which we pass to them
+
+        Using then in button operation
+        :param data:
+        :return:
+        """
         if data['Point0'].a is None:
             self.figure = self.plot_2d(data)
         else:
@@ -225,7 +255,13 @@ class GuiDesignerApp:
         self.print_ranking(data)
         chart.get_tk_widget().pack()
 
-    def reformat_ranking(self, data):
+    def reformat_ranking(self, data: Dict[str, Point]) -> str:
+        """
+        Function to reformat ranking by that pattern
+        'Point name: coords'
+        :param data:
+        :return: str
+        """
         S = ''
         if data['Point0'].a is None:
             for point_name, elem in data.items():
@@ -235,11 +271,15 @@ class GuiDesignerApp:
                 S += f'{point_name}: ({elem.x}, {elem.y}, {elem.a})\n'
         return S
 
-    def print_ranking(self, data):
+    def print_ranking(self, data: Dict[str, Point]) -> None:
         self.string_to_ranking = self.reformat_ranking(data)
         self.text4.insert(tk.INSERT, self.string_to_ranking)
 
-    def refresh(self):
+    def refresh(self) -> None:
+        """
+        This function refresh all app using refresh_button
+        :return:
+        """
         self.wybor_kryteriow.destroy()
         self.wybor_metody.destroy()
         self.labelframe3.destroy()
@@ -257,6 +297,6 @@ if __name__ == '__main__':
     dataTopsis = generete_data()
     app = GuiDesignerApp(root, data_RSM=dataRSM, data_SP_CS=dataSPCS, data_TOPSIS=dataTopsis)
     # print(app.data_RSM)
-    # app.plot_3d(dataSPCS)
+    print(type(app.plot_2d(dataRSM)))
     # print(dataSPCS.keys())
     app.run()
