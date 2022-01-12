@@ -4,6 +4,6 @@
 from copy import deepcopy
 
 class Point:
-    def __init__(self, *cor: list):
+    def __init__(self, cor: list):
         self.cor = deepcopy(cor)
         self.len = len(cor)
