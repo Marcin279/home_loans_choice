@@ -6,9 +6,9 @@ from numpy.linalg import norm
 import math
 from data_processing import *
 
-A1_point = Point([2,1,1])
+A1_point = Point([1,1,1])
 u = Point([5,5,5])
-A2_point = Point([11,11,9])
+A2_point = Point([3,5,7])
 
 class SP_CS:
     def __init__(self):
@@ -23,23 +23,56 @@ def oblicz_d(A1_point,A2_point):
     for i in range(A1_point.len):
         d_ = (A2_point.cor[i] - A1_point.cor[i])/2
         d.append(d_)
-    return min(d)
+    if A1_point.len == 2:
+        print(min(d))
+        return min(d)
+    else:
+        d1 = min(d)
+        # d1_id = d.index(d1)
+        d.remove(d1)
+        d2 = min(d)
+        print(d1,d2)
+        return d1, d2
 
 def krzywa_woronoya(A1_point,A2_point):
-    d = oblicz_d(A1_point,A2_point)
-    f1 = []
-    f2 = []
-    for i in range(A1_point.len):
-        f1.append(A1_point.cor[i]+d)
-        f2.append(A2_point.cor[i]-d)
-    f1 = Point(f1)
-    f2 = Point(f2)
-    return (A1_point,f1,f2,A2_point)
+    d_ = oblicz_d(A1_point,A2_point)
+    if len(d_) == 1:
+        d = d_
+        f1 = []
+        f2 = []
+        for i in range(A1_point.len):
+            f1.append(A1_point.cor[i]+d)
+            f2.append(A2_point.cor[i]-d)
+        f1 = Point(f1)
+        f2 = Point(f2)
+        return (A1_point,f1,f2,A2_point)
+    else:
+        d1,d2 = d_
+        f1 = []
+        f2 = []
+        f3 = []
+        f4 = []
+        for i in range(A1_point.len):
+            f1.append(A1_point.cor[i]+d1)
+            f2.append(A2_point.cor[i]-d1)
+            if i == 0:
+                f3.append(f1[i])
+                f4.append(f2[i])
+            else:
+                f3.append(f1[i]+d1)
+                f4.append(f2[i]-d1)
+        f1 = Point(f1)
+        f2 = Point(f2)
+        f3 = Point(f3)
+        f4 = Point(f4)
+        return (A1_point,f1,f3,f4,f2,A2_point)
+
+
 
 def odleglosc_od_prostej(u,A1_odc, A2_odc):
     p = np.asarray(u.cor)
     a = np.asarray(A1_odc.cor)
-    b = np.asarray(A2_odc.cor)
+    b = np.asarray(A2_odc.cor) 
 
     # normalized tangent vector
     d = np.divide(b - a, np.linalg.norm(b - a))
@@ -148,6 +181,7 @@ for el in ob:
     x.append(el.cor[0])
     y.append(el.cor[1])
     z.append(el.cor[2])
+    # print(el.cor[0],el.cor[1],el.cor[2])
 
 print(x)
 
