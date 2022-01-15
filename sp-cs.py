@@ -1,4 +1,5 @@
 from mpl_toolkits import mplot3d
+import pandas as pd
 # %matplotlib inline
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,9 +7,19 @@ from numpy.linalg import norm
 import math
 from data_processing import *
 
-A1_point = Point([1,1,1])
-u = Point([3,2,3])
-A2_point = Point([3,5,7])
+dane = pd.read_csv("Zeszyt1.csv",sep = ";")
+marza = dane['marza'].tolist()
+prowizja = dane['prowizja'].tolist()
+rrso = dane['rrso'].tolist()
+
+# print(dane.columns)
+# A1_point = Point([7,3,9])
+# u = Point([10,15,13])
+# A2_point = Point([30,26,24])
+
+A1_point = Point([3,7,9])
+u = Point([15,10,13])
+A2_point = Point([26,30,24])
 
 class SP_CS:
     def __init__(self):
@@ -63,8 +74,8 @@ def krzywa_woronoya(A1_point,A2_point):
                 f3.append(f1[i])
                 f4.append(f2[i])
             else:
-                f3.append(f1[i]+d1) #wg wzorów ma być d2
-                f4.append(f2[i]-d1)
+                f3.append(f1[i]+d2) #wg wzorów ma być d2
+                f4.append(f2[i]-d2)
         f1 = Point(f1)
         f2 = Point(f2)
         f3 = Point(f3)
@@ -305,7 +316,7 @@ c = Point([4,4,1])
 # print(point_on_line(c,a,b))
 
 # print("odległość",oblicz_odleglosc(u, A1_point, A2_point))
-# print("współczynnik",oblicz_wspolczynnik_skoringowy(u, A1_point, A2_point) )
+print("współczynnik",oblicz_wspolczynnik_skoringowy(u, A1_point, A2_point) )
 
 
 
