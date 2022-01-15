@@ -4,6 +4,7 @@ import tkinter as tk
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from typing import List, Tuple, Dict
 # import matplotlib
 # matplotlib.use('TkAgg')
 from typing import List, Tuple, Optional, Union, Dict
@@ -11,6 +12,9 @@ from typing import List, Tuple, Optional, Union, Dict
 
 # PROJECT_PATH = pathlib.Path(__file__).parent
 # PROJECT_UI = PROJECT_PATH / "gui_designer.ui"
+
+kryteria = ["Marża", "Prowizja", "RRSO", "Kwota do spłaty", "Koszt miesięczny", "Wkład własny"]
+metody = ["Topsis", "SP-CS", "RSM", "Odniesienia"]
 
 class Point:
     """
@@ -53,6 +57,11 @@ def generete_data(dim3=False):
     return dct
 
 
+def licz_button():
+    status_dict = app.give_statusdict()
+    calculator.start_calculations(status_dict)
+
+
 class GuiDesignerApp:
     def __init__(self, master=None, data_RSM=None, data_TOPSIS=None, data_SP_CS=None):
         # build ui
@@ -63,6 +72,8 @@ class GuiDesignerApp:
         self.string_to_ranking: Optional[str, None] = None
 
         self.figure = None
+
+        self.chbut_status = {}
 
         self.window = tk.Frame(master)
         self.wybor_kryteriow = None
@@ -88,62 +99,52 @@ class GuiDesignerApp:
         """
         # Część kodu odpowiadająca za wybór kryteriów
         self.wybor_kryteriow = tk.LabelFrame(self.window)
-        self.label3 = tk.Label(self.wybor_kryteriow)
-        self.label3.configure(text='label3')
-        self.label3.pack(side='top')
-        self.checkbutton3 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton3.configure(text='checkbutton3')
-        self.checkbutton3.pack(side='top')
-        self.checkbutton4 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton4.configure(text='checkbutton4')
-        self.checkbutton4.pack(side='top')
-        self.checkbutton5 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton5.configure(text='checkbutton5')
-        self.checkbutton5.pack(side='top')
-        self.checkbutton6 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton6.configure(text='checkbutton6')
-        self.checkbutton6.pack(side='top')
-        self.checkbutton7 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton7.configure(text='checkbutton7')
-        self.checkbutton7.pack(side='top')
-        self.checkbutton8 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton8.configure(text='checkbutton8')
-        self.checkbutton8.pack(side='top')
-        self.checkbutton9 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton9.configure(text='checkbutton9')
-        self.checkbutton9.pack(side='top')
-        self.checkbutton10 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton10.configure(text='checkbutton10')
-        self.checkbutton10.pack(side='top')
-        self.checkbutton11 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton11.configure(text='checkbutton11')
-        self.checkbutton11.pack(side='top')
-        self.checkbutton12 = tk.Checkbutton(self.wybor_kryteriow)
-        self.checkbutton12.configure(text='checkbutton12')
-        self.checkbutton12.pack(side='top')
-        self.wybor_kryteriow.configure(height='50', text='wybor_kryteriow', width='40')
+
+        # Nwm po co to ale na wszelki wypadek zostawiłem
+        #self.label3 = tk.Label(self.wybor_kryteriow)
+        #self.label3.configure(text='label3')
+        #self.label3.pack(side='top')
+
+        # Uzupełnianie słownika do przechowywania stanów checkbuttonów
+        liczba_kryt = len(kryteria)
+        liczba_metod = len(metody)
+        for i in range(liczba_kryt+liczba_metod):
+            self.chbut_status[i] = tk.IntVar()
+
+        self.checkbutton0 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[0], variable=self.chbut_status[0])
+        self.checkbutton0.pack(side='top', anchor='w')
+        self.checkbutton1 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[1], variable=self.chbut_status[1])
+        self.checkbutton1.pack(side='top', anchor='w')
+        self.checkbutton2 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[2], variable=self.chbut_status[2])
+        self.checkbutton2.pack(side='top', anchor='w')
+        self.checkbutton3 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[3], variable=self.chbut_status[3])
+        self.checkbutton3.pack(side='top', anchor='w')
+        self.checkbutton4 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[4], variable=self.chbut_status[4])
+        self.checkbutton4.pack(side='top', anchor='w')
+        self.checkbutton5 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[5], variable=self.chbut_status[5])
+        self.checkbutton5.pack(side='top', anchor='w')
+
+        self.wybor_kryteriow.configure(height='50', text='KRYTERIA', width='40', labelanchor='n')
         self.wybor_kryteriow.grid(column='0', padx='5', pady='5', row='1', sticky='n')
 
         # częśc kodu odpowiadająca za wybór metody
         self.wybor_metody = tk.LabelFrame(self.window)
-        self.label4 = tk.Label(self.wybor_metody)
-        self.label4.configure(text='label4')
-        self.label4.pack(side='top')
 
-        self.checkbutton1 = tk.Checkbutton(self.wybor_metody)
-        self.checkbutton1.configure(text='checkbutton1')
-        self.checkbutton1.pack(side='top')
-        self.checkbutton2 = tk.Checkbutton(self.wybor_metody)
-        self.checkbutton2.configure(text='checkbutton2')
-        self.checkbutton2.pack(side='top')
-        self.checkbutton13 = tk.Checkbutton(self.wybor_metody)
-        self.checkbutton13.configure(text='checkbutton13')
-        self.checkbutton13.pack(side='top')
-        self.checkbutton14 = tk.Checkbutton(self.wybor_metody)
-        self.checkbutton14.configure(text='checkbutton14')
-        self.checkbutton14.pack(side='top')
+        # To samo co przy label 3
+        #self.label4 = tk.Label(self.wybor_metody)
+        #self.label4.configure(text='label4')
+        #self.label4.pack(side='top')
 
-        self.wybor_metody.configure(height='50', relief='raised', text='wybor_metody', width='25')
+        self.checkbutton6 = tk.Checkbutton(self.wybor_metody, text=metody[0], variable=self.chbut_status[6])
+        self.checkbutton6.pack(side='top', anchor='w')
+        self.checkbutton7 = tk.Checkbutton(self.wybor_metody, text=metody[1], variable=self.chbut_status[7])
+        self.checkbutton7.pack(side='top', anchor='w')
+        self.checkbutton8 = tk.Checkbutton(self.wybor_metody, text=metody[2], variable=self.chbut_status[8])
+        self.checkbutton8.pack(side='top', anchor='w')
+        self.checkbutton9 = tk.Checkbutton(self.wybor_metody, text=metody[3], variable=self.chbut_status[9])
+        self.checkbutton9.pack(side='top', anchor='w')
+
+        self.wybor_metody.configure(height='50', relief='raised', text='METODY', width='25', labelanchor='n')
         self.wybor_metody.grid(column='1', padx='5', pady='5', row='1', sticky='n')
 
         # Ta część kodu odopowiada za przełączenie się na wybrany ekran metody
@@ -186,7 +187,7 @@ class GuiDesignerApp:
 
         self.labelframe4 = tk.LabelFrame(self.window)
         self.button8 = tk.Button(self.labelframe4)
-        self.button8.configure(cursor='arrow', font='{Arial CE} 12 {bold}', text='Licz')
+        self.button8.configure(cursor='arrow', font='{Arial CE} 12 {bold}', text='Licz', command=licz_button())
         self.button8.pack(side='top')
         self.labelframe4.configure(height='200', width='200')
         self.labelframe4.grid(column='1', row='3')
@@ -289,6 +290,69 @@ class GuiDesignerApp:
 
         self.create_ui_main()
 
+    def give_statusdict(self):
+        return self.chbut_status
+
+
+class RankingCalculations:
+    def __init__(self):
+        self.chosen_methods = []
+        self.chosen_criteria = []
+        # self.topsis_result
+        # self.topsis_time
+        # self.spcs_result
+        # self.spcs_time
+        # self.rsm_result
+        # self.rsm_time
+        # self.reference_result
+        # self.reference_time
+
+
+    def start_calculations(self, checkbutton_status: Dict):
+        # Konwersja ze słownia do listy samych wartości
+        status_list = [status.get() for status in list(checkbutton_status.values())]
+
+        # Wypełnienie list metod i kryteriów
+        for i in range(len(kryteria)):
+            self.chosen_criteria.append(status_list.pop(0))
+        for i in range(len(metody)):
+            self.chosen_methods.append(status_list.pop(0))
+
+        # Wywołanie wybranego algorytmu obliczającego ranking
+        if self.chosen_criteria[0] == 1:
+            self.run_topsis()
+        if self.chosen_criteria[1] == 1:
+            self.run_spcs()
+        if self.chosen_criteria[2] == 1:
+            self.run_rsm()
+        if self.chosen_criteria[3] == 1:
+            self.run_reference()
+
+        print("Obliczenia rozpoczęte")
+
+    def run_topsis(self):
+        #self.topsis_result =
+        pass
+
+    def run_spcs(self):
+        #self.spcs_result =
+        pass
+
+    def run_rsm(self):
+        #self.rsm_result =
+        pass
+
+    def run_reference(self):
+        #self.reference_result =
+        pass
+
+    def give_results(self):
+        # Metoda będzie zwracała wszystkie obliczone rankingi oraz czasy obliczeń
+        pass
+
+    def reset_selfvals(self):
+        pass
+
 
 if __name__ == '__main__':
     root = tk.Tk()
@@ -296,6 +360,7 @@ if __name__ == '__main__':
     dataSPCS = generete_data(dim3=True)
     dataTopsis = generete_data()
     app = GuiDesignerApp(root, data_RSM=dataRSM, data_SP_CS=dataSPCS, data_TOPSIS=dataTopsis)
+    calculator = RankingCalculations()
     # print(app.data_RSM)
     print(type(app.plot_2d(dataRSM)))
     # print(dataSPCS.keys())
