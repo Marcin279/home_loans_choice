@@ -7,3 +7,6 @@ class Point:
     def __init__(self, cor: list):
         self.cor = deepcopy(cor)
         self.len = len(cor)
+
+    def __len__(self):
+        return len(self.cor)
