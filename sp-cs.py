@@ -5,21 +5,60 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy.linalg import norm
 import math
+
+from scipy.fft import dct
 from data_processing import *
+import time
 
-dane = pd.read_csv("Zeszyt1.csv",sep = ";")
-marza = dane['marza'].tolist()
-prowizja = dane['prowizja'].tolist()
-rrso = dane['rrso'].tolist()
+dane = pd.read_excel("dane.xlsx",'Arkusz3')
+marza = dane['Marża [%]'].tolist()
+prowizja = dane['Prowizja [%]'].tolist()
+rrso = dane['RRSO [%]'].tolist()
 
+# A1 = ['N33','N34','N1','N26','N28','N27']
+# A2 = ['N17','N49','N52','N21', 'N19','N17']
+A1 = ['N33']
+A2 = ['N49']
+
+df_A1 = dane[dane['Punkt'].isin(A1)]
+
+df_A2 = dane[dane['Punkt'].isin(A2)]
+
+dane = dane[~dane["Punkt"].isin(A1)]
+
+dane = dane[~dane["Punkt"].isin(A2)]
+
+# print(dane)
 # print(dane.columns)
 # A1_point = Point([7,3,9])
 # u = Point([10,15,13])
 # A2_point = Point([30,26,24])
 
-A1_point = Point([3,7,9])
-u = Point([15,10,13])
-A2_point = Point([26,30,24])
+# A1_point = Point([10,19,21])
+# u = Point([15,22,30])
+# A2_point = Point([30,40,55])
+
+# A1_point = Point([21,19,10])
+# u = Point([30,22,15])
+# A2_point = Point([55,40,30])
+x = 'Marża [%]'
+z = 'Opinie[pkt. Max. 5]'
+y = 'RRSO [%]'
+
+A1_points = []
+
+for row in df_A1.iterrows():
+    A1_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
+
+A2_points = []
+
+for row in df_A2.iterrows():
+    A2_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
+
+B0_points = []
+
+for row in dane.iterrows():
+    B0_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
 
 class SP_CS:
     def __init__(self):
@@ -51,6 +90,7 @@ def oblicz_d(A1_point,A2_point):
 # Wyznacza pkt załamania krzywej woronoya
 def krzywa_woronoya(A1_point,A2_point):
     d_ = oblicz_d(A1_point,A2_point)
+    # print(d_)
     if len(d_) == 1:
         d = d_
         f1 = []
@@ -70,14 +110,47 @@ def krzywa_woronoya(A1_point,A2_point):
         for i in range(A1_point.len):
             f1.append(A1_point.cor[i]+d1)
             f2.append(A2_point.cor[i]-d1)
-            if i == 0:
-                f3.append(f1[i])
-                f4.append(f2[i])
-            else:
-                f3.append(f1[i]+d2) #wg wzorów ma być d2
-                f4.append(f2[i]-d2)
+        if f1[0] == f2[0]:
+            x = 0
+            f1_ = Point(f1[1:3])
+            f2_ = Point(f2[1:3])
+        elif f1[1] == f2[1]:
+            x = 1
+            y = [f1[0]]
+            y.append(f1[2])
+            f1_ = Point(y)
+            y = [f2[0]]
+            y.append(f2[2])
+            f2_ = Point(y)
+        elif f1[2] == f2[2]:
+            x = 2
+            f1_ = Point(f1[0:2])
+            f2_ = Point(f2[0:2])
+        # f1_ = Point(f1[0:2])
+        # f2_ = Point(f2[0:2])
         f1 = Point(f1)
         f2 = Point(f2)
+        d1 = oblicz_d(f1_,f2_)
+        # print(d1)
+        for i in range(f1_.len):
+            f3.append(f1_.cor[i]+d1)
+            f4.append(f2_.cor[i]-d1)
+        # for i in range(A1_point.len):
+            
+            # f1.append(A1_point.cor[i]+d1)
+            # f2.append(A2_point.cor[i]-d1)
+            # if i == 0:
+            #     f3.append(f1[i])
+            #     f4.append(f2[i])
+            # else:
+            #     f3.append(f1[i]+d2) #wg wzorów ma być d2
+            #     f4.append(f2[i]-d2)
+        # f1 = Point(f1)
+        # f2 = Point(f2)
+        f3.insert(x,f1.cor[x])
+        f4.insert(x,f2.cor[x])
+        # f3.append(f1.cor[2])
+        # f4.append(f2.cor[2])
         f3 = Point(f3)
         f4 = Point(f4)
         return (A1_point,f1,f3,f4,f2,A2_point)
@@ -133,6 +206,7 @@ def sprawdz_czy_punkt_u_w_odcinku_AB(u, point_1, point_2):
     
     return result
 
+
 # rzutowanie na linie
 def point_on_line(u, a, b):
     au = np.array(u.cor) - np.array(a.cor)
@@ -142,7 +216,8 @@ def point_on_line(u, a, b):
     # t = max(0, min(1, t))
     # print('ab', ab, 'au', au, 't', t)
     result = a.cor + t * ab
-    print("rezult",result)
+    # print("rezult",result)
+
     return result
 
 
@@ -281,31 +356,31 @@ def oblicz_wspolczynnik_skoringowy(u,A1_point,A2_point):
         return (x[2]-z_min)/(z_max-z_min)   
 
 
-ob = krzywa_woronoya(A1_point,A2_point)
-x = []
-y = []
-z = []
-for el in ob:
-    print("pkt",el.cor)
-    x.append(el.cor[0])
-    y.append(el.cor[1])
-    z.append(el.cor[2])
+# ob = krzywa_woronoya(A1_point,A2_point)
+# x = []
+# y = []
+# z = []
+# for el in ob:
+#     print("pkt",el.cor)
+#     x.append(el.cor[0])
+#     y.append(el.cor[1])
+#     z.append(el.cor[2])
     # print(el.cor[0],el.cor[1],el.cor[2])
 
 # print(x)
 
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-ax.plot3D(x, y, z, 'gray')
-ax.scatter3D(x, y, z, c=z, cmap='brg')
-plt.show()
+# fig = plt.figure()
+# ax = plt.axes(projection='3d')
+# ax.plot3D(x, y, z, 'gray')
+# ax.scatter3D(x, y, z, c=z, cmap='brg')
+# plt.show()
 
 # a = Point([1,1,1,1])
 # b = Point([7,1,1,1])
 # c = Point([4,5,1,1])
-a = Point([1,5,1])
-b = Point([7,1,4])
-c = Point([4,4,1])
+# a = Point([1,5,1])
+# b = Point([7,1,4])
+# c = Point([4,4,1])
 
 # print(odleglosc_od_prostej(c,a,b))
 
@@ -316,8 +391,36 @@ c = Point([4,4,1])
 # print(point_on_line(c,a,b))
 
 # print("odległość",oblicz_odleglosc(u, A1_point, A2_point))
-print("współczynnik",oblicz_wspolczynnik_skoringowy(u, A1_point, A2_point) )
+# print("współczynnik",oblicz_wspolczynnik_skoringowy(u, A1_point, A2_point) )
+def bubble_sort(list_1: list):
+    if not isinstance(list_1,list):
+        return None
+    n = len(list_1)
+    while n > 0:
+        for i in range(0,n-1):
+            if list_1[i] < list_1[i+1]:
+                el = list_1[i]
+                list_1[i] = list_1[i+1]
+                list_1[i+1] = el
+        n = n-1
+    return list_1
 
+for point in B0_points:
+    suma = 0
+    for A1_point in A1_points:
+        for A2_point in A2_points:
+            suma += oblicz_wspolczynnik_skoringowy(point,A1_point,A2_point)
+            # krzywa_woronoya(point, A1_point, A2_point)
+            # print("wspol", oblicz_wspolczynnik_skoringowy(point,A1_point,A2_point))
+    point.skoring = suma
 
+dct_out = {}
+
+for point in B0_points:
+    dct_out[point.name]=point.skoring
+
+dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1],reverse=True))
+
+print(dct_out)
 
 
