@@ -417,10 +417,15 @@ for point in B0_points:
 dct_out = {}
 
 for point in B0_points:
-    dct_out[point.name]=point.skoring
+    dct_out[point]=point.skoring
 
 dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1],reverse=True))
 
-print(dct_out)
+dct_out1 = {}
+
+for key in dct_out:
+    dct_out1[key.name] = [key.cor[0],key.cor[1],key.cor[2]]
+    
+print(dct_out1)
 
 
