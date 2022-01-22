@@ -3,20 +3,21 @@ import pandas as pd
 
 # Pobieranie danych do macierzy:
 def data(path):
-    my_data = pd.read_csv(path, sep=",")
-    my_data = my_data.values   
+    my_data = pd.read_csv("dane_2.csv", sep=";", encoding='latin-1')
+    my_data = my_data.values 
+    my_data = my_data[:,:my_data.shape[1] - 1]  
     return my_data
 
 
 # Ustawianie ręczne flag czy kryterium ma dążyć do maks czy do min
-def flagi_kryteriów():
-    kryteria = ['min', 'min', 'max', 'min']
+def flagi_kryteriow():
+    kryteria = ['min', 'min', 'min', 'min', 'min']
     return kryteria
 
 
 # Ustawienie wszystkich kryteriów żeby dążyły do minimum (początkowo zmienia do minimu a po drugim wywołaniu z powrotem)
 def odwrocenie_max_kryteriow(M):
-    flagi = flagi_kryteriów()
+    flagi = flagi_kryteriow()
     for i in range(0, len(flagi)):
         if flagi[i] == 'max':
             M[:, i] = -M[:, i]
@@ -274,63 +275,94 @@ def wyznaczenie_zbiorow(pref, pref_qwo):
     #  pref_qwo - to preferencje minimalne do wyznaczenia zbioru A2 (klijent chce coś więcej niż to)
 
     # Pobierz dane z pliku csv i utwórz macierz decyzji:
-    D =  data("Decyzje.csv")
+    D =  data("Decyzje_prb.csv")
 
     # Przemnóż maksymalne kryteria przez -1:
     Dmin = odwrocenie_max_kryteriow(D)
+    # print(Dmin)
+    # pref = odwrocenie_max_kryteriow(pref)
+    # pref_qwo = odwrocenie_max_kryteriow(pref_qwo)
 
     #  Wyznaczanie zbiru A0 i wektora idealne:
     A0, vec_ideal = punkty_najlepsze(Dmin)
-    print('Punkty najlepsze')
-    print(odwrocenie_max_kryteriow(A0))
-    print('Wektor idealny', odwrocenie_max_kryteriow(vec_ideal))
-    print()
 
     #  Wyznaczanie zbioru A3 i wektora antyidealnego:
     A3, vec_anty_ideal = punkty_najlepsze(Dmin, 'max')
-    print('Punkty najgorzsze')
-    print(odwrocenie_max_kryteriow(A3))
-    print('Wektor antyidealny', odwrocenie_max_kryteriow(vec_anty_ideal))
-    print()
 
     #  Wyznaczanie zbioru A1  i sprawdzenie wewnętrznej niesprzeczności:
     A1 = nieporownywalne_dla_preferencji(pref,Dmin)
     A1 = wewnetrzna_niesprzecznosc(A1)
-    print()
 
     # Sprawdzenie zewnętrznej niesprzeczności dla zbiorów A1 i A0:
     A1 = zewnetrzna_niesprzecznosc(A1,A0)
-    print('Punkty preferencji nieosiągalnych:')
-    print(odwrocenie_max_kryteriow(A1))
+    if A1.shape == (0,):
+        A1 = A0
 
     # Wyznaczenie wektora idealnego dla A1:
     idealny_A1 = punkt_idealny_dla_klasy_preferencji(A1, 'min')
-    print('Wektor idealny z A1:', odwrocenie_max_kryteriow(idealny_A1))
-    print()
     
     #  Wyznaczenie zbioru A2:
     A2 = nieporownywalne_dla_preferencji(pref_qwo,Dmin)
     A2 = wewnetrzna_niesprzecznosc(A2)
-    print()
+    # print()
+    # print(A2)
+    # print()
+    # print(A1)
 
    # Sprawdzenie zewnętrznej niesprzeczności dla zbiorów A2 i A1
     A2 = zewnetrzna_niesprzecznosc(A2,A1)
-    print('Punkty status QWO:')
-    print(odwrocenie_max_kryteriow(A2))
+    if A2.shape == (0,):
+        A2 = A1
+        idealny_A2 = punkt_idealny_dla_klasy_preferencji(A2, 'maks')
+        M = A1
+    else:
+        # Wyznaczenie wektora idealnego dla A2:
+        idealny_A2 = punkt_idealny_dla_klasy_preferencji(A2, 'maks')
 
-    # Wyznaczenie wektora idealnego dla A2:
-    idealny_A2 = punkt_idealny_dla_klasy_preferencji(A2, 'maks')
-    print('Wektor nadir z A2:', odwrocenie_max_kryteriow(idealny_A2))
-    print()
+        # Wyznaczenie zbioru decyzji między A1 i A2:
+        M = wyznaczanie_zbioru_mozliwych_decyzji(A1, A2, Dmin)
+    kryteria = flagi_kryteriow()
+    if 'max' in kryteria:
+        M = odwrocenie_max_kryteriow(M)
+        A0 = odwrocenie_max_kryteriow(A0)
+        vec_ideal = odwrocenie_max_kryteriow(vec_ideal)
+        vec_anty_ideal = odwrocenie_max_kryteriow(vec_anty_ideal)
+        A3 = odwrocenie_max_kryteriow(A3)
+        A2 = odwrocenie_max_kryteriow(A2)
+        A1 = odwrocenie_max_kryteriow(A1)
+        idealny_A1 = odwrocenie_max_kryteriow(idealny_A1)
+        idealny_A2 = odwrocenie_max_kryteriow(idealny_A2)
+    
+    return (A0, vec_ideal, A1, idealny_A1, A2, idealny_A2, A3, vec_anty_ideal, M)
 
-    # Wyznaczenie zbioru decyzji między A1 i A2:
-    M = wyznaczanie_zbioru_mozliwych_decyzji(A1, A2, Dmin)
-    print('Pomiędzy A1 a A2')
-    print(odwrocenie_max_kryteriow(M)) 
+
 
 
 def main():
-    pref = np.array([8, 10, 16, 5500])
-    pref_qwo = np.array([29, 25, 8, 10000])
-    wyznaczenie_zbiorow(pref, pref_qwo)
+    pref = np.array([1.4, 0, 4.5, 631000, 1900])
+    pref_qwo = np.array([1.8, 2, 5.1, 681000, 2300])
+    A0, A0_vec, A1, A1_vec, A2, A2_vec, A3, A3_vec, M = wyznaczenie_zbiorow(pref, pref_qwo)
+
+    print('Punkty najlepsze')
+    print(A0)
+    print()
+    print('Wektor idealny', A0_vec)
+    print()
+    print('Punkty najgorzsze')
+    print(A3)
+    print()
+    print('Wektor antyidealny', A3_vec)
+    print()
+    print('Punkty preferencji nieosiągalnych:')
+    print(A1)
+    print()
+    print('Wektor idealny z A1:', A1_vec)
+    print()
+    print('Punkty status QWO:')
+    print(A2)
+    print()
+    print('Wektor nadir z A2:',  A2_vec)
+    print()
+    print('Pomiędzy A1 a A2:')
+    print(M)
 main()
