@@ -8,34 +8,73 @@ from typing import List, Tuple, Dict
 # import matplotlib
 # matplotlib.use('TkAgg')
 from typing import List, Tuple, Optional, Union, Dict
-
+import uta_star
 
 # PROJECT_PATH = pathlib.Path(__file__).parent
 # PROJECT_UI = PROJECT_PATH / "gui_designer.ui"
 
-kryteria = ["Marża", "Prowizja", "RRSO", "Kwota do spłaty", "Koszt miesięczny", "Wkład własny"]
-metody = ["Topsis", "SP-CS", "RSM", "Odniesienia"]
+kryteria = ["Marża", "Prowizja", "RRSO", "Koszt miesięczny", "Wkład własny", 'Opinie']
+metody = ["Topsis", "SP-CS", "RSM", "UTA"]
+
+
+class Kryteria:
+    marza = False
+    prowizja = False
+    RRSO = False
+    wklad_wlasny = False
+    kryt1 = False
+    kryt2 = False
+
+
+class Metody:
+    topsis = False
+    sp_cs = False
+    rsm = False
+    odniesienia = False
+
 
 class Point:
     """
     class representing Point
     """
-    def __init__(self, x, y, a=None):
-        self.x = x
-        self.y = y
-        self.a = a
-        # self.b = None
-        # self.c = None
-        # self.d = None
-        # self.e = None
-        # self.f = None
-        # self.g = None
-        # self.h = None
+
+    def __init__(self, marza=None, prowizja=None, RRSO=None, wklad_wlasny=None, kryt_1=None, kryt_2=None):
+        self.marza = marza
+        self.prowizja = prowizja
+        self.RRSO = RRSO
+        self.wklad_wlasny = wklad_wlasny
+        self.kryt_1 = kryt_1
+        self.kryt_2 = kryt_2
+
+        self.count = 0
+
+    # def __repr__(self):
+    #     if self.marza is not None and self.prowizja is not None and self.RRSO is not None:
+    #         return f'{self.marza}, {self.prowizja}, {self.RRSO}'
+    #
+    #     elif self.marza is not None and self.prowizja is not None and self.wklad_wlasny is not None:
+    #         return f'{self.marza}, {self.prowizja}, {self.wklad_wlasny}'
+    #
+    #     elif self.marza is not None and self.prowizja is not None and self.kryt_1 is not None:
+    #         return f'{self.marza}; {self.prowizja}, {self.kryt_1}'
+    #
+    #     elif self.marza is not None and self.prowizja is not None and self.kryt_2 is not None:
+    #         return f'{self.marza}; {self.prowizja}, {self.kryt_2}'
+    #
+    #     elif
+
+    def check_which_are_not_none(self):
+        tmp = [self.marza, self.prowizja, self.RRSO, self.wklad_wlasny, self.kryt_1, self.kryt_2]
+        return [elem for elem in tmp if elem is not None]
 
     def __repr__(self):
-        if self.a is not None:
-            return f'{self.x}, {self.y}, {self.a}'
-        return f'{self.x}; {self.y}'
+        tmp = self.check_which_are_not_none()
+        if len(tmp) == 3:
+            return f'{tmp[0]}, {tmp[1]}, {tmp[2]}'
+        elif len(tmp) == 2:
+            return f'{tmp[0]}, {tmp[1]}'
+        else:
+            return 'Error'
 
 
 def generete_data(dim3=False):
@@ -56,10 +95,6 @@ def generete_data(dim3=False):
         dct[lst_name[i]] = lst[i]
     return dct
 
-
-def licz_button():
-    status_dict = app.give_statusdict()
-    calculator.start_calculations(status_dict)
 
 
 class GuiDesignerApp:
@@ -94,21 +129,20 @@ class GuiDesignerApp:
         """
         This Function create all LabelFrames in gui app
 
-
         :return:
         """
         # Część kodu odpowiadająca za wybór kryteriów
         self.wybor_kryteriow = tk.LabelFrame(self.window)
 
         # Nwm po co to ale na wszelki wypadek zostawiłem
-        #self.label3 = tk.Label(self.wybor_kryteriow)
-        #self.label3.configure(text='label3')
-        #self.label3.pack(side='top')
+        # self.label3 = tk.Label(self.wybor_kryteriow)
+        # self.label3.configure(text='label3')
+        # self.label3.pack(side='top')
 
         # Uzupełnianie słownika do przechowywania stanów checkbuttonów
         liczba_kryt = len(kryteria)
         liczba_metod = len(metody)
-        for i in range(liczba_kryt+liczba_metod):
+        for i in range(liczba_kryt + liczba_metod):
             self.chbut_status[i] = tk.IntVar()
 
         self.checkbutton0 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[0], variable=self.chbut_status[0])
@@ -131,9 +165,9 @@ class GuiDesignerApp:
         self.wybor_metody = tk.LabelFrame(self.window)
 
         # To samo co przy label 3
-        #self.label4 = tk.Label(self.wybor_metody)
-        #self.label4.configure(text='label4')
-        #self.label4.pack(side='top')
+        # self.label4 = tk.Label(self.wybor_metody)
+        # self.label4.configure(text='label4')
+        # self.label4.pack(side='top')
 
         self.checkbutton6 = tk.Checkbutton(self.wybor_metody, text=metody[0], variable=self.chbut_status[6])
         self.checkbutton6.pack(side='top', anchor='w')
@@ -187,10 +221,16 @@ class GuiDesignerApp:
 
         self.labelframe4 = tk.LabelFrame(self.window)
         self.button8 = tk.Button(self.labelframe4)
-        self.button8.configure(cursor='arrow', font='{Arial CE} 12 {bold}', text='Licz', command=licz_button())
+        self.button8.configure(cursor='arrow', font='{Arial CE} 12 {bold}', text='Licz', command=self.licz_button)
         self.button8.pack(side='top')
         self.labelframe4.configure(height='200', width='200')
         self.labelframe4.grid(column='1', row='3')
+
+
+    def licz_button(self):
+        status_dict = self.give_statusdict()
+        print(status_dict)
+        calculator.start_calculations(status_dict)
 
     def run(self):
         """
@@ -209,11 +249,11 @@ class GuiDesignerApp:
         figure1, ax1 = plt.subplots(figsize=(5, 3), dpi=100)
         # data: Dict[str, Point] = self.data_RSM
 
-        x = [elem.x for p, elem in data.items()]
-        y = [elem.y for p, elem in data.items()]
+        x = [elem.marza for p, elem in data.items()]
+        y = [elem.prowizja for p, elem in data.items()]
         ax1.scatter(x, y)
         for key, coords in data.items():
-            ax1.annotate(key, (coords.x, coords.y))
+            ax1.annotate(key, (coords.marza, coords.prowizja))
         figure1.show()
         return figure1
 
@@ -226,9 +266,9 @@ class GuiDesignerApp:
         figure1 = plt.figure(figsize=(6, 4), dpi=100)
         ax1 = plt.axes(projection="3d")
 
-        x = [elem.x for p, elem in data.items()]
-        y = [elem.y for p, elem in data.items()]
-        z = [elem.a for p, elem in data.items()]
+        x = [elem.marza for p, elem in data.items()]
+        y = [elem.prowizja for p, elem in data.items()]
+        z = [elem.RRSO for p, elem in data.items()]
         key_lst = list(data.keys())
 
         for i in range(len(x)):
@@ -247,7 +287,7 @@ class GuiDesignerApp:
         :param data:
         :return:
         """
-        if data['Point0'].a is None:
+        if data['Point0'].RRSO is None:
             self.figure = self.plot_2d(data)
         else:
             self.figure = self.plot_3d(data)
@@ -264,12 +304,12 @@ class GuiDesignerApp:
         :return: str
         """
         S = ''
-        if data['Point0'].a is None:
+        if data['Point0'].RRSO is None:
             for point_name, elem in data.items():
-                S += f'{point_name}: ({elem.x}, {elem.y})\n'
+                S += f'{point_name}: ({elem.marza}, {elem.prowizja})\n'
         else:
             for point_name, elem in data.items():
-                S += f'{point_name}: ({elem.x}, {elem.y}, {elem.a})\n'
+                S += f'{point_name}: ({elem.marza}, {elem.prowizja}, {elem.RRSO})\n'
         return S
 
     def print_ranking(self, data: Dict[str, Point]) -> None:
@@ -298,19 +338,21 @@ class RankingCalculations:
     def __init__(self):
         self.chosen_methods = []
         self.chosen_criteria = []
-        # self.topsis_result
-        # self.topsis_time
-        # self.spcs_result
-        # self.spcs_time
-        # self.rsm_result
-        # self.rsm_time
-        # self.reference_result
-        # self.reference_time
-
+        self.topsis_result = []
+        self.topsis_time = []
+        self.spcs_result = []
+        self.spcs_time = []
+        self.rsm_result = []
+        self.rsm_time = []
+        self.uta_result = []
+        self.uta_time = []
 
     def start_calculations(self, checkbutton_status: Dict):
         # Konwersja ze słownia do listy samych wartości
         status_list = [status.get() for status in list(checkbutton_status.values())]
+
+        self.chosen_methods = []
+        self.chosen_criteria = []
 
         # Wypełnienie list metod i kryteriów
         for i in range(len(kryteria)):
@@ -318,43 +360,67 @@ class RankingCalculations:
         for i in range(len(metody)):
             self.chosen_methods.append(status_list.pop(0))
 
+        print(self.chosen_methods)
+        print(self.chosen_criteria)
+
         # Wywołanie wybranego algorytmu obliczającego ranking
-        if self.chosen_criteria[0] == 1:
+        if self.chosen_methods[0] == 1:
             self.run_topsis()
-        if self.chosen_criteria[1] == 1:
+        if self.chosen_methods[1] == 1:
             self.run_spcs()
-        if self.chosen_criteria[2] == 1:
+        if self.chosen_methods[2] == 1:
             self.run_rsm()
-        if self.chosen_criteria[3] == 1:
-            self.run_reference()
+        if self.chosen_methods[3] == 1:
+            self.run_uta()
 
         print("Obliczenia rozpoczęte")
 
     def run_topsis(self):
-        #self.topsis_result =
+        # self.topsis_result =
         pass
 
     def run_spcs(self):
-        #self.spcs_result =
+        # self.spcs_result =
         pass
 
     def run_rsm(self):
-        #self.rsm_result =
+        # self.rsm_result =
         pass
 
-    def run_reference(self):
-        #self.reference_result =
-        pass
+    def run_uta(self):
+
+        if self.uta_result != []:
+            self.uta_result = []
+        columns_names = {0:'Marża [%]', 1:'Prowizja [%]', 2:'RRSO [%]', 3:'Koszt miesięczny [PLN]', 4:'Wkład własny [%]', 5:'Opinie[pkt. Max. 5]'}
+        crits = []
+        for i in range(len(self.chosen_criteria)):
+            if self.chosen_criteria[i]:
+                crits.append(columns_names[i])
+        self.uta_result = uta_star.run(crits)
 
     def give_results(self):
-        # Metoda będzie zwracała wszystkie obliczone rankingi oraz czasy obliczeń
-        pass
+        results = []
+        if self.chosen_methods[0] == 1 and self.topsis_result != []:
+            results.append(self.topsis_result)
+        if self.chosen_methods[1] == 1  and self.spcs_result != []:
+            self.run_spcs(self.spcs_result)
+        if self.chosen_methods[2] == 1 and self.topsis_result != []:
+            self.run_rsm(self.rsm_result)
+        if self.chosen_methods[3] == 1 and self.rsm_result != []:
+            self.run_uta(self.uta_result)
+        return results 
 
     def reset_selfvals(self):
+
         pass
 
 
-if __name__ == '__main__':
+def test_Point():
+    p = Point(marza=15, RRSO=25, wklad_wlasny=12)
+    print(p)
+
+
+def test_gui():
     root = tk.Tk()
     dataRSM = generete_data()
     dataSPCS = generete_data(dim3=True)
@@ -362,6 +428,18 @@ if __name__ == '__main__':
     app = GuiDesignerApp(root, data_RSM=dataRSM, data_SP_CS=dataSPCS, data_TOPSIS=dataTopsis)
     calculator = RankingCalculations()
     # print(app.data_RSM)
-    print(type(app.plot_2d(dataRSM)))
+    # print(dataSPCS.keys())
+    app.run()
+
+
+if __name__ == '__main__':
+    # test_Point()
+    root = tk.Tk()
+    dataRSM = generete_data()
+    dataSPCS = generete_data(dim3=True)
+    dataTopsis = generete_data()
+    app = GuiDesignerApp(root, data_RSM=dataRSM, data_SP_CS=dataSPCS, data_TOPSIS=dataTopsis)
+    calculator = RankingCalculations()
+    # print(app.data_RSM)
     # print(dataSPCS.keys())
     app.run()
