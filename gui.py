@@ -10,11 +10,29 @@ from typing import List, Tuple, Dict
 from typing import List, Tuple, Optional, Union, Dict
 import uta_star
 
+
 # PROJECT_PATH = pathlib.Path(__file__).parent
 # PROJECT_UI = PROJECT_PATH / "gui_designer.ui"
 
 kryteria = ["Marża", "Prowizja", "RRSO", "Koszt miesięczny", "Wkład własny", 'Opinie']
 metody = ["Topsis", "SP-CS", "RSM", "UTA"]
+
+
+class Kryteria:
+    marza = False
+    prowizja = False
+    RRSO = False
+    wklad_wlasny = False
+    kryt1 = False
+    kryt2 = False
+
+
+class Metody:
+    topsis = False
+    sp_cs = False
+    rsm = False
+    odniesienia = False
+
 
 
 class Kryteria:
@@ -338,6 +356,7 @@ class RankingCalculations:
     def __init__(self):
         self.chosen_methods = []
         self.chosen_criteria = []
+
         self.topsis_result = []
         self.topsis_time = []
         self.spcs_result = []
@@ -346,6 +365,7 @@ class RankingCalculations:
         self.rsm_time = []
         self.uta_result = []
         self.uta_time = []
+
 
     def start_calculations(self, checkbutton_status: Dict):
         # Konwersja ze słownia do listy samych wartości
@@ -387,6 +407,7 @@ class RankingCalculations:
         # self.rsm_result =
         pass
 
+
     def run_uta(self):
 
         if self.uta_result != []:
@@ -397,6 +418,7 @@ class RankingCalculations:
             if self.chosen_criteria[i]:
                 crits.append(columns_names[i])
         self.uta_result = uta_star.run(crits)
+
 
     def give_results(self):
         results = []
