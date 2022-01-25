@@ -283,10 +283,11 @@ def wyznaczenie_zbiorow(pref, pref_qwo):
     #  pref - to preferencje do wyznaczenia zbioru A1 (nieosiągalnego dla kljenta), 
     #  pref_qwo - to preferencje minimalne do wyznaczenia zbioru A2 (klijent chce coś więcej niż to)
 
-    # Pobierz dane z pliku csv i utwórz macierz decyzji:
+    # Pobierz dane z pliku csv i utwórz macierz decyzji oraz zwróć listę flag czy dane kryterium dąży do min czy maks:
+    # argumenty: ścieżka do pliku z danymi i lista z nazwami kryteriów wybranych przez klienta
     D, flagi =  data("dane.xlsx")
 
-    # Przemnóż maksymalne kryteria przez -1:
+    # Przemnóż maksymalne kryteria przez -1 (bo algorytm działa dla min, na końcu następuje odwrócenie na znak dodatni):
     Dmin = odwrocenie_max_kryteriow(D, flagi)
 
     #  Wyznaczanie zbiru A0 i wektora idealne:
@@ -297,12 +298,14 @@ def wyznaczenie_zbiorow(pref, pref_qwo):
     
     #  Wyznaczanie zbioru A1  i sprawdzenie wewnętrznej niesprzeczności:
     A1 = nieporownywalne_dla_preferencji(pref,Dmin)
+    # W razie gdyby macierz A1 pusta to do A2 przypisz A0
     if A1.shape[0] == 0:
         A1 = deepcopy(A0)
     A1 = wewnetrzna_niesprzecznosc(A1)
 
     # Sprawdzenie zewnętrznej niesprzeczności dla zbiorów A1 i A0:
     A1 = zewnetrzna_niesprzecznosc(A1,A0)
+    # W razie gdyby macierz A1 pusta to do A0 przypisz A3
     if A1.shape[0] == 0:
         A1 = deepcopy(A0)
 
@@ -311,12 +314,14 @@ def wyznaczenie_zbiorow(pref, pref_qwo):
     
     #  Wyznaczenie zbioru A2:
     A2 = nieporownywalne_dla_preferencji(pref_qwo,Dmin)
+    # W razie gdyby macierz A2 pusta to do A2 przypisz A3
     if A2.shape[0] == 0:
         A2 = deepcopy(A3)
     A2 = wewnetrzna_niesprzecznosc(A2)
 
    # Sprawdzenie zewnętrznej niesprzeczności dla zbiorów A2 i A1
     A2 = zewnetrzna_niesprzecznosc(A2,A1)
+    # W razie gdyby macierz A2 pusta to do A2 przypisz A3
     if A2.shape[0] == 0:
         A2 = deepcopy(A3)
 
@@ -325,10 +330,12 @@ def wyznaczenie_zbiorow(pref, pref_qwo):
     
     # Wyznaczenie zbioru decyzji między A1 i A2:
     M = wyznaczanie_zbioru_mozliwych_decyzji(A1, A2, Dmin)
+    # W razie gdyby macierz M pusta to do M przypisz A3, a do A2 przypisz A3
     if M.shape[0] == 0:
         M = deepcopy(A2)
         A2 = deepcopy(A3)
 
+    # Przemnóż maksymalne kryteria przez -1 aby powrócić do wartości dodatnich
     if 'max' in flagi:
         M = odwrocenie_max_kryteriow(M, flagi)
         A0 = odwrocenie_max_kryteriow(A0, flagi)
@@ -339,37 +346,37 @@ def wyznaczenie_zbiorow(pref, pref_qwo):
         A1 = odwrocenie_max_kryteriow(A1, flagi)
         idealny_A1 = odwrocenie_max_kryteriow(idealny_A1, flagi)
         idealny_A2 = odwrocenie_max_kryteriow(idealny_A2, flagi)
-
+    # Funckja zwraca odpowiednio zbiór A0 i wektor idealny, zbiór A3 i wektor anty-idealny, zbiór A1 i wektor idelny dla niego, zbiór A2 i wektor nadir, zbiór decyzji pomiędzy A1 i A2 czyli M, flagi - lista czy kryterium dąży do min czy maks. 
     return A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, M, flagi
 
+#  Przykład wywołania:
+# def main():
+#     pref = np.array([1.2, 15, -5])
+#     pref_qwo = np.array([3.5, 42, -1])
+#     A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, M, flagi = wyznaczenie_zbiorow(pref, pref_qwo)
 
-def main():
-    pref = np.array([1.2, 15, -5])
-    pref_qwo = np.array([3.5, 42, -1])
-    A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, M, flagi = wyznaczenie_zbiorow(pref, pref_qwo)
+#     print('Punkty najlepsze')
+#     print(A0)
+#     print('Wektor idealny', vec_ideal)
+#     print()
 
-    print('Punkty najlepsze')
-    print(A0)
-    print('Wektor idealny', vec_ideal)
-    print()
+#     print('Punkty najgorzsze')
+#     print(A3)
+#     print('Wektor antyidealny', vec_anty_ideal)
+#     print()
 
-    print('Punkty najgorzsze')
-    print(A3)
-    print('Wektor antyidealny', vec_anty_ideal)
-    print()
+#     print('Punkty preferencji nieosiągalnych:')
+#     print(A1)
+#     print('Wektor idealny z A1:', idealny_A1)
+#     print()
 
-    print('Punkty preferencji nieosiągalnych:')
-    print(A1)
-    print('Wektor idealny z A1:', idealny_A1)
-    print()
+#     print('Punkty status QWO:')
+#     print(A2)
 
-    print('Punkty status QWO:')
-    print(A2)
+#     print('Wektor nadir z A2:', idealny_A2)
+#     print()
 
-    print('Wektor nadir z A2:', idealny_A2)
-    print()
+#     print('Pomiędzy A1 a A2')
+#     print(M) 
 
-    print('Pomiędzy A1 a A2')
-    print(M) 
-
-main()
+# main()
