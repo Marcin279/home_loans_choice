@@ -2,7 +2,7 @@ import numpy as np
 import punkty_odniesienia as po
 
 
-
+#  Sortowanie rankingu:
 def bubble_sort(lst1, lst2):
     if lst1 == []:
         return lst1
@@ -14,6 +14,7 @@ def bubble_sort(lst1, lst2):
                 lst2[j], lst2[j+1] = lst2[j+1], lst2[j]
     return lst1, lst2
 
+# Algorytm Fuzzy-Topsis:
 def topsis_fuzzy(macierz_decyzyjna, idealnyA1_nieskalowany, nadir_nieskalowany,min_max='min'):
     liczbaAlternatyw, iloscKryteriow = macierz_decyzyjna.shape
     wektorWag = [1, 1, 1, 1, 1]
@@ -73,18 +74,26 @@ def topsis_fuzzy(macierz_decyzyjna, idealnyA1_nieskalowany, nadir_nieskalowany,m
         dictionary[macierz_decyzyjna[int(numer_wiersza[i]), 0]] = temp_list
     return dictionary
 
-def main():
 
-
-    pref = np.array([1.99, 15, -4, 1])
-    pref_qwo = np.array([2.3, 42, -3.5])
-    A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, antyidealny_A2, M, flagi = po.wyznaczenie_zbiorow(pref, pref_qwo)
-
+# Funkcja do wywołania całego algorytmu:
+def run_topsis(pref, pref_qwo, lista_kryteriow):
+    A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, antyidealny_A2, M, flagi = po.wyznaczenie_zbiorow(pref, pref_qwo, lista_kryteriow)
     topsis_fuzzy(M, idealny_A1, antyidealny_A2, flagi)
 
 
-    return None
+# Przykład wywołania:
+# def main():
 
 
-if __name__ == "__main__":
-    main()
+#     pref = np.array([1.99, 15, -4, 1])
+#     pref_qwo = np.array([2.3, 42, -3.5])
+#     A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, antyidealny_A2, M, flagi = po.wyznaczenie_zbiorow(pref, pref_qwo)
+
+#     topsis_fuzzy(M, idealny_A1, antyidealny_A2, flagi)
+
+
+#     return None
+
+
+# if __name__ == "__main__":
+#     main()
