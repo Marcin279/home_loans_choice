@@ -2,9 +2,11 @@ import pandas as pd
 from typing import List
 import numpy as np
 
+crits_type = {'Marża [%]': 0, 'Prowizja [%]': 0, 'RRSO [%]': 0, 'Koszt miesięczny [PLN]': 0, 'Wkład własny [%]': 0,
+              'Opinie[pkt. Max. 5]': 1}
 
-crits_type = {'Marża [%]':0, 'Prowizja [%]':0, 'RRSO [%]':0, 'Koszt miesięczny [PLN]':0, 'Wkład własny [%]':0, 'Opinie[pkt. Max. 5]':1}
-columns_names_order = {'Marża [%]':1, 'Prowizja [%]':2, 'RRSO [%]':3, 'Koszt miesięczny [PLN]':4, 'Wkład własny [%]':5, 'Opinie[pkt. Max. 5]':6}
+columns_names_order = {'Marża [%]': 1, 'Prowizja [%]': 2, 'RRSO [%]': 3, 'Koszt miesięczny [PLN]': 4,
+                       'Wkład własny [%]': 5, 'Opinie[pkt. Max. 5]': 6}
 
 
 def find_max(df):
@@ -59,13 +61,13 @@ def find_use_funs(point_ideal, point_inideal, is_max, crits, num_of_divs=2):
     else:
         return None
 
-    max_value = 1/no_of_crits
+    max_value = 1 / no_of_crits
     for i in range(no_of_crits):
         weigths = []
         functions = []
-        args = np.sort(np.linspace(point_inideal[i], point_ideal[i], divs[i]+1))
+        args = np.sort(np.linspace(point_inideal[i], point_ideal[i], divs[i] + 1))
         no_of_args = len(args)
-        
+
         if is_max[crits[i]]:
             for j in range(no_of_args):
                 weigths = np.linspace(0, max_value, no_of_args)
@@ -74,10 +76,10 @@ def find_use_funs(point_ideal, point_inideal, is_max, crits, num_of_divs=2):
                 weigths = np.linspace(max_value, 0, no_of_args)
 
         for k in range(divs[i]):
-            a = (weigths[k+1]-weigths[k])/(args[k+1]-args[k])
-            b = weigths[k+1]-args[k+1]*a
-            functions.append((a, b, args[k], args[k+1]))
-        
+            a = (weigths[k + 1] - weigths[k]) / (args[k + 1] - args[k])
+            b = weigths[k + 1] - args[k + 1] * a
+            functions.append((a, b, args[k], args[k + 1]))
+
         result.append(functions)
 
     return result
@@ -92,9 +94,9 @@ def make_ranking(df, funs_and_parts, crits):
         for val in list(df[crits[i]]):
             checked = False
             for j in range(no_of_parts):
-                a, b , x1, x2 = funs_and_parts[i][j]
+                a, b, x1, x2 = funs_and_parts[i][j]
                 if x1 <= val <= x2 and not checked:
-                    u = a*val+b
+                    u = a * val + b
                     if u <= 0:
                         u = 0
                     u_values.append(u)
@@ -112,7 +114,7 @@ def make_ranking(df, funs_and_parts, crits):
 
     return ranking
 
-    
+
 def run(active_crits, path='dane.xlsx', exel_data_sheet='Arkusz3'):
     crits = []
     no_of_crits = len(active_crits)
@@ -125,7 +127,7 @@ def run(active_crits, path='dane.xlsx', exel_data_sheet='Arkusz3'):
             if order < min_order:
                 min_order = order
                 column = crit
-       
+
         crits.append(active_crits.pop(active_crits.index(column)))
 
     crits.append('Punkt')
@@ -143,13 +145,12 @@ def run(active_crits, path='dane.xlsx', exel_data_sheet='Arkusz3'):
         crits_values = []
         for k in range(no_of_crits):
             crits_values.append(df[crits[k]].loc[w])
-            sorted_ranking[w] =  crits_values
+            sorted_ranking[w] = crits_values
 
     return sorted_ranking
 
 
 if __name__ == '__main__':
-    crits = ['Opinie[pkt. Max. 5]','Marża [%]']
+    crits = ['Opinie[pkt. Max. 5]', 'Marża [%]']
     path = 'dane.xlsx'
     print(run(crits))
-    

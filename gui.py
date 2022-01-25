@@ -11,7 +11,6 @@ from typing import List, Tuple, Dict
 from typing import List, Tuple, Optional, Union, Dict
 import uta_star
 
-
 # PROJECT_PATH = pathlib.Path(__file__).parent
 # PROJECT_UI = PROJECT_PATH / "gui_designer.ui"
 
@@ -33,7 +32,6 @@ class Metody:
     sp_cs = False
     rsm = False
     odniesienia = False
-
 
 
 class Kryteria:
@@ -115,7 +113,6 @@ def generete_data(dim3=False):
     return dct
 
 
-
 class GuiDesignerApp:
     def __init__(self, master=None, data_RSM=None, data_TOPSIS=None, data_SP_CS=None):
         # build ui
@@ -167,17 +164,23 @@ class GuiDesignerApp:
         for i in range(liczba_kryt + liczba_metod):
             self.chbut_status[i] = tk.IntVar()
 
-        self.checkbutton0 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[0], variable=self.chbut_status[0], command=lambda:self.update_check())
+        self.checkbutton0 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[0], variable=self.chbut_status[0],
+                                           command=lambda: self.update_check())
         self.checkbutton0.pack(side='top', anchor='w')
-        self.checkbutton1 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[1], variable=self.chbut_status[1], command=lambda:self.update_check())
+        self.checkbutton1 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[1], variable=self.chbut_status[1],
+                                           command=lambda: self.update_check())
         self.checkbutton1.pack(side='top', anchor='w')
-        self.checkbutton2 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[2], variable=self.chbut_status[2], command=lambda:self.update_check())
+        self.checkbutton2 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[2], variable=self.chbut_status[2],
+                                           command=lambda: self.update_check())
         self.checkbutton2.pack(side='top', anchor='w')
-        self.checkbutton3 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[3], variable=self.chbut_status[3], command=lambda:self.update_check())
+        self.checkbutton3 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[3], variable=self.chbut_status[3],
+                                           command=lambda: self.update_check())
         self.checkbutton3.pack(side='top', anchor='w')
-        self.checkbutton4 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[4], variable=self.chbut_status[4], command=lambda:self.update_check())
+        self.checkbutton4 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[4], variable=self.chbut_status[4],
+                                           command=lambda: self.update_check())
         self.checkbutton4.pack(side='top', anchor='w')
-        self.checkbutton5 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[5], variable=self.chbut_status[5], command=lambda:self.update_check())
+        self.checkbutton5 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[5], variable=self.chbut_status[5],
+                                           command=lambda: self.update_check())
         self.checkbutton5.pack(side='top', anchor='w')
 
         self.wybor_kryteriow.configure(height='50', text='KRYTERIA', width='40', labelanchor='n')
@@ -404,7 +407,6 @@ class RankingCalculations:
         self.uta_result = []
         self.uta_time = []
 
-
     def start_calculations(self, checkbutton_status: Dict):
         # Konwersja ze słownia do listy samych wartości
         status_list = [status.get() for status in list(checkbutton_status.values())]
@@ -442,33 +444,37 @@ class RankingCalculations:
         pass
 
     def run_rsm(self):
-        # self.rsm_result =
-        pass
+        if self.rsm_result != []:
+            self.rsm_result = []
 
+        columns_names = {0: 'Marża [%]', 1: 'Prowizja [%]', 2: 'RRSO [%]', 3: 'Koszt miesięczny [PLN]',
+                         4: 'Wkład własny [%]', 5: 'Opinie[pkt. Max. 5]'}
+
+        crits
 
     def run_uta(self):
 
         if self.uta_result != []:
             self.uta_result = []
-        columns_names = {0:'Marża [%]', 1:'Prowizja [%]', 2:'RRSO [%]', 3:'Koszt miesięczny [PLN]', 4:'Wkład własny [%]', 5:'Opinie[pkt. Max. 5]'}
+        columns_names = {0: 'Marża [%]', 1: 'Prowizja [%]', 2: 'RRSO [%]', 3: 'Koszt miesięczny [PLN]',
+                         4: 'Wkład własny [%]', 5: 'Opinie[pkt. Max. 5]'}
         crits = []
         for i in range(len(self.chosen_criteria)):
             if self.chosen_criteria[i]:
                 crits.append(columns_names[i])
         self.uta_result = uta_star.run(crits)
 
-
     def give_results(self):
         results = []
         if self.chosen_methods[0] == 1 and self.topsis_result != []:
             results.append(self.topsis_result)
-        if self.chosen_methods[1] == 1  and self.spcs_result != []:
+        if self.chosen_methods[1] == 1 and self.spcs_result != []:
             self.run_spcs(self.spcs_result)
         if self.chosen_methods[2] == 1 and self.topsis_result != []:
             self.run_rsm(self.rsm_result)
         if self.chosen_methods[3] == 1 and self.rsm_result != []:
             self.run_uta(self.uta_result)
-        return results 
+        return results
 
     def reset_selfvals(self):
 
