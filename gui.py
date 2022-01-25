@@ -1,6 +1,7 @@
 import pathlib
 import pygubu
 import tkinter as tk
+from tkinter import messagebox
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -137,6 +138,9 @@ class GuiDesignerApp:
         self.labelframe4 = None
         # self.label3 = None
 
+        self.active_crits_num = 0
+        self.active_meths_num = 0
+
         self.window.configure(height='900', width='1600')
         self.window.pack(padx='40', pady='20', side='top')
 
@@ -163,17 +167,17 @@ class GuiDesignerApp:
         for i in range(liczba_kryt + liczba_metod):
             self.chbut_status[i] = tk.IntVar()
 
-        self.checkbutton0 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[0], variable=self.chbut_status[0])
+        self.checkbutton0 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[0], variable=self.chbut_status[0], command=lambda:self.update_check())
         self.checkbutton0.pack(side='top', anchor='w')
-        self.checkbutton1 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[1], variable=self.chbut_status[1])
+        self.checkbutton1 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[1], variable=self.chbut_status[1], command=lambda:self.update_check())
         self.checkbutton1.pack(side='top', anchor='w')
-        self.checkbutton2 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[2], variable=self.chbut_status[2])
+        self.checkbutton2 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[2], variable=self.chbut_status[2], command=lambda:self.update_check())
         self.checkbutton2.pack(side='top', anchor='w')
-        self.checkbutton3 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[3], variable=self.chbut_status[3])
+        self.checkbutton3 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[3], variable=self.chbut_status[3], command=lambda:self.update_check())
         self.checkbutton3.pack(side='top', anchor='w')
-        self.checkbutton4 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[4], variable=self.chbut_status[4])
+        self.checkbutton4 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[4], variable=self.chbut_status[4], command=lambda:self.update_check())
         self.checkbutton4.pack(side='top', anchor='w')
-        self.checkbutton5 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[5], variable=self.chbut_status[5])
+        self.checkbutton5 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[5], variable=self.chbut_status[5], command=lambda:self.update_check())
         self.checkbutton5.pack(side='top', anchor='w')
 
         self.wybor_kryteriow.configure(height='50', text='KRYTERIA', width='40', labelanchor='n')
@@ -244,11 +248,45 @@ class GuiDesignerApp:
         self.labelframe4.configure(height='200', width='200')
         self.labelframe4.grid(column='1', row='3')
 
+    def update_check(self):
+        conv_crits_status = [status.get() for status in list(self.chbut_status.values())][:-4]
+        if conv_crits_status.count(1) == 3:
+            if conv_crits_status[0] == 0:
+                self.checkbutton0.configure(state='disabled')
+            if conv_crits_status[1] == 0:
+                self.checkbutton1.configure(state='disabled')
+            if conv_crits_status[2] == 0:
+                self.checkbutton2.configure(state='disabled')
+            if conv_crits_status[3] == 0:
+                self.checkbutton3.configure(state='disabled')
+            if conv_crits_status[4] == 0:
+                self.checkbutton4.configure(state='disabled')
+            if conv_crits_status[5] == 0:
+                self.checkbutton5.configure(state='disabled')
+        else:
+            self.checkbutton0.configure(state='normal')
+            self.checkbutton1.configure(state='normal')
+            self.checkbutton2.configure(state='normal')
+            self.checkbutton3.configure(state='normal')
+            self.checkbutton4.configure(state='normal')
+            self.checkbutton5.configure(state='normal')
 
     def licz_button(self):
-        status_dict = self.give_statusdict()
-        print(status_dict)
-        calculator.start_calculations(status_dict)
+        conv_crits_status = [status.get() for status in list(self.chbut_status.values())]
+        if conv_crits_status[:-4].count(1) == 0 and conv_crits_status[6:].count(1) == 0:
+            messagebox.showerror('Błąd', 'Musisz wybrać przynajmniej jedno kryterium oraz metodę!')
+        elif conv_crits_status[:-4].count(1) == 0:
+            messagebox.showerror('Błąd', 'Musisz wybrać przynajmniej jedno kryterium!')
+        elif conv_crits_status[6:].count(1) == 0:
+            messagebox.showerror('Błąd', 'Musisz wybrać przynajmniej jedną metodę!')
+        else:
+            status_dict = self.give_statusdict()
+            print(status_dict)
+            calculator.start_calculations(status_dict)
+
+        chart = FigureCanvasTkAgg(self.figure, self.labelframe3)
+        self.print_ranking(data)
+        chart.get_tk_widget().pack()
 
     def run(self):
         """
