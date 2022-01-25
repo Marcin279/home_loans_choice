@@ -116,6 +116,7 @@ def make_ranking(df, funs_and_parts, crits):
 def run(active_crits, path='dane.xlsx', exel_data_sheet='Arkusz3'):
     crits = []
     no_of_crits = len(active_crits)
+    crits_values = []
 
     while len(crits) < no_of_crits:
         min_order = 10
@@ -139,13 +140,16 @@ def run(active_crits, path='dane.xlsx', exel_data_sheet='Arkusz3'):
     sorted_ranking = {}
     sorted_keys = sorted(ranking, key=ranking.get, reverse=True)
     for w in sorted_keys:
-        sorted_ranking[w] = ranking[w]
+        crits_values = []
+        for k in range(no_of_crits):
+            crits_values.append(df[crits[k]].loc[w])
+            sorted_ranking[w] =  crits_values
 
     return sorted_ranking
 
 
 if __name__ == '__main__':
-    crits = ['Opinie[pkt. Max. 5]','Marża [%]',	'Prowizja [%]',	'RRSO [%]',	'Wkład własny [%]',	'Koszt miesięczny [PLN]']
+    crits = ['Opinie[pkt. Max. 5]','Marża [%]']
     path = 'dane.xlsx'
     print(run(crits))
     
