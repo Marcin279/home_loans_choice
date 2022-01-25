@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, Tuple, List, Union, Optional
 from copy import deepcopy
+import punkty_odniesienia as po
 
 class Point:
     def __init__(self, cor: list,name = None,skoring = None):
@@ -15,23 +16,23 @@ class Point:
         return len(self.cor)
 
 # Wczytywanie zbioru punktów
-dane = pd.read_excel("dane.xlsx",'Arkusz3')
-marza = dane['Marża [%]'].tolist()
-prowizja = dane['Prowizja [%]'].tolist()
-rrso = dane['RRSO [%]'].tolist()
+# dane = pd.read_excel("dane.xlsx",'Arkusz3')
+# marza = dane['Marża [%]'].tolist()
+# prowizja = dane['Prowizja [%]'].tolist()
+# rrso = dane['RRSO [%]'].tolist()
 
 # A1 = ['N33','N34','N1','N26','N28','N27']
 # A2 = ['N17','N49','N52','N21', 'N19','N17']
-A1 = ['N33']
-A2 = ['N49']
+# A1 = ['N33']
+# A2 = ['N49']
 
-df_A1 = dane[dane['Punkt'].isin(A1)]
+# df_A1 = dane[dane['Punkt'].isin(A1)]
 
-df_A2 = dane[dane['Punkt'].isin(A2)]
+# df_A2 = dane[dane['Punkt'].isin(A2)]
 
-dane = dane[~dane["Punkt"].isin(A1)]
+# dane = dane[~dane["Punkt"].isin(A1)]
 
-dane = dane[~dane["Punkt"].isin(A2)]
+# dane = dane[~dane["Punkt"].isin(A2)]
 
 # print(dane)
 # print(dane.columns)
@@ -39,34 +40,41 @@ dane = dane[~dane["Punkt"].isin(A2)]
 # u = Point([10,15,13])
 # A2_point = Point([30,26,24])
 
-A1_point = Point([10,19,21])
-u = Point([15,22,30])
-A2_point = Point([30,40,55])
+# A1_point = Point([10,19,21])
+# u = Point([15,22,30])
+# A2_point = Point([30,40,55])
 
 # A1_point = Point([21,19,10])
 # u = Point([30,22,15])
 # A2_point = Point([55,40,30])
-y = 'Marża [%]'
-x = 'Opinie[pkt. Max. 5]'
-z = 'RRSO [%]'
+# y = 'Marża [%]'
+# x = 'Opinie[pkt. Max. 5]'
+# z = 'RRSO [%]'
+
+# pref = np.array([1, 15, -5])
+# pref_qwo = np.array([2.3, 42, -1])
+# pref = np.array([1.99, 15, -4,1])
+# pref_qwo = np.array([2.3, 42, -3.5])
+pref = np.array([1.8, 15, -5]) # dla wartosci mniejszej niz 1.8 nie działa
+pref_qwo = np.array([3.4, 42, -1])
+A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref, pref_qwo)
 
 A1_points = []
-
-for row in df_A1.iterrows():
-    A1_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
-
 A2_points = []
-
-for row in df_A2.iterrows():
-    A2_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
-
 B0_points = []
 
-for row in dane.iterrows():
-    B0_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
+for i, row in enumerate(A1):
+    A1_points.append(Point([row[1],row[2],row[3]],row[0]))
 
+for i, row in enumerate(A2):
+    A2_points.append(Point([row[1],row[2],row[3]],row[0]))
 
+for i, row in enumerate(B0):
+    B0_points.append(Point([row[1],row[2],row[3]],row[0]))
 
+# A1_points = A1_points.tolist()
+# A2_points = A2_points.tolist()
+# B0_points = B0_points.tolist()
 
 def check(u, point_A1, point_A2) -> bool:
     """
@@ -79,6 +87,7 @@ def check(u, point_A1, point_A2) -> bool:
 
     Return: bool
     """
+    """ Zmienić warunki w przypadku maksymalizacji!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! """
     if len(u.cor) == 2:
         if ((u.cor[0] >= point_A1.cor[0]) and (u.cor[0]<= point_A2.cor[0])) and ((u.cor[1] >= point_A1.cor[1]) and (u.cor[1] <= point_A2.cor[1])):
             return True
@@ -204,22 +213,30 @@ def skoring(u, A1, A2) -> Tuple:
         f = d_anty / (d_anty + d_idealny)
         F += waga * f
     u_ = u.name
-    return (F, u_)
+    return F
 
 
 # Poniższa częśc kodu odpowiada za tworzenie rankingu
 # ranking jest zwracany w postaci List[Tuple(float, str')]
 # listy punktów od najlepszego do najgorszego
-dct_out = {}
+def run_rsm(B0_points, A1_points, A2_points):
+    dct_out = {}
 
-for point in B0_points:
-    dct_out[point]=skoring(point, A1_points, A2_points)
-
-dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1],reverse=True))
-
-dct_out1 = {}
-
-for key in dct_out:
-    dct_out1[key.name] = [key.cor[0],key.cor[1],key.cor[2]]
+    for point in B0_points:
+        dct_out[point]=skoring(point, A1_points, A2_points)
     
-print(dct_out1)
+    print(dct_out.items())
+
+    dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1],reverse=True))
+
+    dct_out1 = {}
+
+    for key in dct_out:
+        if len(key.cor) == 2:
+            dct_out1[key.name] = [key.cor[0],key.cor[1]]
+        if len(key.cor) == 3:
+            dct_out1[key.name] = [key.cor[0],key.cor[1],key.cor[2]]
+        
+    return dct_out1
+
+print(run_rsm(B0_points, A1_points, A2_points))
