@@ -4,8 +4,9 @@ import tkinter as tk
 from tkinter import messagebox
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from typing import List, Tuple, Dict
+import pandas as pd
 # import matplotlib
 # matplotlib.use('TkAgg')
 from typing import List, Tuple, Optional, Union, Dict
@@ -143,6 +144,7 @@ class GuiDesignerApp:
 
         self.window.configure(height='900', width='1600')
         self.window.pack(padx='40', pady='20', side='top')
+        #self.window.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
 
         # Main widget
         self.mainwindow = self.window
@@ -240,6 +242,7 @@ class GuiDesignerApp:
 
         self.labelframe3.configure(height='300', text='Wykres', width='300')
         self.labelframe3.grid(column='1', padx='10', pady='10', row='2')
+        
 
         self.labelframe4 = tk.LabelFrame(self.window)
         self.button8 = tk.Button(self.labelframe4)
@@ -250,6 +253,9 @@ class GuiDesignerApp:
 
     def update_check(self):
         conv_crits_status = [status.get() for status in list(self.chbut_status.values())][:-4]
+
+        self.plot_current_data()
+
         if conv_crits_status.count(1) == 3:
             if conv_crits_status[0] == 0:
                 self.checkbutton0.configure(state='disabled')
@@ -296,43 +302,145 @@ class GuiDesignerApp:
         self.create_ui_main()
         self.mainwindow.mainloop()
 
-    def plot_2d(self, data: Dict[str, Point]):
-        """
-        Plot 2 dimensional chart
-        args: data: List[Point]
-        :return:
-        """
-        figure1, ax1 = plt.subplots(figsize=(5, 3), dpi=100)
-        # data: Dict[str, Point] = self.data_RSM
+    def plot_current_data(self):
+        conv_crits_status = [status.get() for status in list(self.chbut_status.values())][:-4]
 
-        x = [elem.marza for p, elem in data.items()]
-        y = [elem.prowizja for p, elem in data.items()]
-        ax1.scatter(x, y)
-        for key, coords in data.items():
-            ax1.annotate(key, (coords.marza, coords.prowizja))
-        figure1.show()
-        return figure1
+        columns_names = {0:'Marża [%]', 1:'Prowizja [%]', 2:'RRSO [%]', 3:'Koszt miesięczny [PLN]', 4:'Wkład własny [%]', 5:'Opinie[pkt. Max. 5]'}
+        crits = []
+        for i in range(len(conv_crits_status)):
+            if conv_crits_status[i]:
+                crits.append(columns_names[i])
+        no_of_crits = len(crits)  
+        crits.append('Punkt')
 
-    def plot_3d(self, data: Dict[str, Point]):
+        self.labelframe3.destroy()
+        self.labelframe3 = tk.LabelFrame(self.window)
+        self.labelframe3.configure(height='300', text='Wykres', width='300')
+
+
+
+        self.labelframe3.grid(column='1', padx='10', pady='10', row='2')
+
+        self.labelframe3.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
+        
+        
+        if no_of_crits != 0:
+            df = pd.read_excel(io='dane.xlsx', sheet_name='Arkusz3', index_col=0, usecols=crits)  
+  
+            indexes = list(df.index)
+            values = list(df.values.tolist())
+            points = dict(zip(indexes, values))
+
+            if no_of_crits == 1:
+                self.figure = self.plot_1d(points)
+                pass
+            elif no_of_crits == 2:
+                self.figure = self.plot_2d(points)
+                pass
+            elif no_of_crits == 3:
+                self.figure = self.plot_3d(points)
+                pass
+        else:
+            pass
+
+    def plot_1d(self, data: Dict):
+
+        x = data.values()
+        y = [0] * len(x)
+
+        figure1 = plt.Figure(figsize=(2,3), dpi=100)
+        fig = figure1.add_subplot(111)
+        canvas = FigureCanvasTkAgg(figure1, master = self.labelframe3)
+        canvas.get_tk_widget().pack(fill='both')
+        
+        fig.grid()
+        fig.plot(x, y, 'o')
+        canvas.draw()
+        
+        fig.clear()
+        plt.close('all')
+
+    def plot_2d(self, data: Dict):
+
+        x = [tab[0] for tab in list(data.values())]
+        y = [tab[1] for tab in list(data.values())]
+
+        figure1 = plt.Figure(figsize=(2,3), dpi=100)
+        fig = figure1.add_subplot(111)
+        canvas = FigureCanvasTkAgg(figure1, master = self.labelframe3)
+        canvas.get_tk_widget().pack(fill='both')
+        
+        fig.grid()
+        fig.plot(x, y, 'o')
+        canvas.draw()
+        
+        fig.clear()
+        plt.close('all')
+
+
+    def plot_3d(self, data: Dict):
         """
         Plot 3 dimensional chart
         :param data:
         :return:
         """
-        figure1 = plt.figure(figsize=(6, 4), dpi=100)
-        ax1 = plt.axes(projection="3d")
+        x = [tab[0] for tab in list(data.values())]
+        y = [tab[1] for tab in list(data.values())]
+        z = [tab[2] for tab in list(data.values())]
 
-        x = [elem.marza for p, elem in data.items()]
-        y = [elem.prowizja for p, elem in data.items()]
-        z = [elem.RRSO for p, elem in data.items()]
-        key_lst = list(data.keys())
-
+        figure1 = plt.Figure(figsize=(2,3), dpi=100)
+        fig = figure1.add_subplot(111)
+        fig.axes(projection="3d")
+        canvas = FigureCanvasTkAgg(figure1, master = self.labelframe3)
+        canvas.get_tk_widget().pack(fill='both')
+        
+        fig.grid()
         for i in range(len(x)):
-            ax1.scatter(x[i], y[i], z[i], color='b')
-            ax1.text(x[i], y[i], z[i], (key_lst[i]), size=8, zorder=1)
+            fig.scatter(x[i], y[i], z[i], color='b')
+            #fig.text(x[i], y[i], z[i], (key_lst[i]), size=8, zorder=1)
+        canvas.draw()
+        
+        fig.clear()
+        plt.close('all')
 
-        figure1.show()
-        return figure1
+ 
+    # def plot_2d(self, data: Dict[str, Point]):
+    #     """
+    #     Plot 2 dimensional chart
+    #     args: data: List[Point]
+    #     :return:
+    #     """
+    #     figure1, ax1 = plt.subplots(figsize=(5, 3), dpi=100)
+    #     # data: Dict[str, Point] = self.data_RSM
+
+    #     x = [elem.marza for p, elem in data.items()]
+    #     y = [elem.prowizja for p, elem in data.items()]
+    #     ax1.scatter(x, y)
+    #     for key, coords in data.items():
+    #         ax1.annotate(key, (coords.marza, coords.prowizja))
+    #     figure1.show()
+    #     return figure1
+
+    # def plot_3d(self, data: Dict[str, Point]):
+    #     """
+    #     Plot 3 dimensional chart
+    #     :param data:
+    #     :return:
+    #     """
+    #     figure1 = plt.figure(figsize=(6, 4), dpi=100)
+    #     ax1 = plt.axes(projection="3d")
+
+    #     x = [elem.marza for p, elem in data.items()]
+    #     y = [elem.prowizja for p, elem in data.items()]
+    #     z = [elem.RRSO for p, elem in data.items()]
+    #     key_lst = list(data.keys())
+
+    #     for i in range(len(x)):
+    #         ax1.scatter(x[i], y[i], z[i], color='b')
+    #         ax1.text(x[i], y[i], z[i], (key_lst[i]), size=8, zorder=1)
+
+    #     figure1.show()
+    #     return figure1
 
     def plot_values(self, data):
         """
