@@ -3,8 +3,7 @@ import pandas as pd
 from copy import deepcopy
 
 # Pobieranie danych do macierzy i ustawianie flag czy kryterium ma dążyć do maks czy do min:
-def data(path):
-    lista_kryt = ['Punkt', 'Marża [%]', 'Wkład własny [%]', 'Opinie[pkt. Max. 5]']
+def data(path, lista_kryt):
     liczba_kryt = len(lista_kryt) - 1
     flagi_kryt = ['min']*liczba_kryt
     if 'Opinie[pkt. Max. 5]' in lista_kryt:
@@ -279,13 +278,13 @@ def wyznaczanie_zbioru_mozliwych_decyzji(A1, A2, D):
 
 
 # Wyznaczenie zbiorów A0, A1, A2, A3 na gotowo wraz z ich wektorami idealnymi oraz zbioru decyzji dopuszczalnych pomiędzy A1 i A2:
-def wyznaczenie_zbiorow(pref, pref_qwo):
+def wyznaczenie_zbiorow(pref, pref_qwo, kryteria):
     #  pref - to preferencje do wyznaczenia zbioru A1 (nieosiągalnego dla kljenta), 
     #  pref_qwo - to preferencje minimalne do wyznaczenia zbioru A2 (klijent chce coś więcej niż to)
 
     # Pobierz dane z pliku csv i utwórz macierz decyzji oraz zwróć listę flag czy dane kryterium dąży do min czy maks:
     # argumenty: ścieżka do pliku z danymi i lista z nazwami kryteriów wybranych przez klienta
-    D, flagi =  data("dane.xlsx")
+    D, flagi =  data("dane.xlsx", kryteria)
 
     # Przemnóż maksymalne kryteria przez -1 (bo algorytm działa dla min, na końcu następuje odwrócenie na znak dodatni):
     Dmin = odwrocenie_max_kryteriow(D, flagi)
