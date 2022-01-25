@@ -5,8 +5,9 @@ from typing import Dict, Tuple, List, Union, Optional
 from copy import deepcopy
 import punkty_odniesienia as po
 
+
 class Point:
-    def __init__(self, cor: list,name = None,skoring = None):
+    def __init__(self, cor: list, name=None, skoring=None):
         self.name = name
         self.cor = deepcopy(cor)
         self.len = len(cor)
@@ -14,6 +15,7 @@ class Point:
 
     def __len__(self):
         return len(self.cor)
+
 
 # Wczytywanie zbioru punktów
 # dane = pd.read_excel("dane.xlsx",'Arkusz3')
@@ -55,7 +57,7 @@ class Point:
 # pref_qwo = np.array([2.3, 42, -1])
 # pref = np.array([1.99, 15, -4,1])
 # pref_qwo = np.array([2.3, 42, -3.5])
-pref = np.array([1.8, 15, -5]) # dla wartosci mniejszej niz 1.8 nie działa
+pref = np.array([1.8, 15, -5])  # dla wartosci mniejszej niz 1.8 nie działa
 pref_qwo = np.array([3.4, 42, -1])
 A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref, pref_qwo)
 
@@ -64,13 +66,14 @@ A2_points = []
 B0_points = []
 
 for i, row in enumerate(A1):
-    A1_points.append(Point([row[1],row[2],row[3]],row[0]))
+    A1_points.append(Point([row[1], row[2], row[3]], row[0]))
 
 for i, row in enumerate(A2):
-    A2_points.append(Point([row[1],row[2],row[3]],row[0]))
+    A2_points.append(Point([row[1], row[2], row[3]], row[0]))
 
 for i, row in enumerate(B0):
-    B0_points.append(Point([row[1],row[2],row[3]],row[0]))
+    B0_points.append(Point([row[1], row[2], row[3]], row[0]))
+
 
 # A1_points = A1_points.tolist()
 # A2_points = A2_points.tolist()
@@ -89,15 +92,19 @@ def check(u, point_A1, point_A2) -> bool:
     """
     """ Zmienić warunki w przypadku maksymalizacji!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! """
     if len(u.cor) == 2:
-        if ((u.cor[0] >= point_A1.cor[0]) and (u.cor[0]<= point_A2.cor[0])) and ((u.cor[1] >= point_A1.cor[1]) and (u.cor[1] <= point_A2.cor[1])):
+        if ((u.cor[0] >= point_A1.cor[0]) and (u.cor[0] <= point_A2.cor[0])) and (
+                (u.cor[1] >= point_A1.cor[1]) and (u.cor[1] <= point_A2.cor[1])):
             return True
         else:
             return False
     elif len(u.cor) == 3:
-        if ((u.cor[0] >= point_A1.cor[0]) and (u.cor[0]<= point_A2.cor[0])) and ((u.cor[1] >= point_A1.cor[1]) and (u.cor[1] <= point_A2.cor[1])) and ((u.cor[2] >= point_A1.cor[2]) and (u.cor[2] <= point_A2.cor[2])):
+        if ((u.cor[0] >= point_A1.cor[0]) and (u.cor[0] <= point_A2.cor[0])) and (
+                (u.cor[1] >= point_A1.cor[1]) and (u.cor[1] <= point_A2.cor[1])) and (
+                (u.cor[2] >= point_A1.cor[2]) and (u.cor[2] <= point_A2.cor[2])):
             return True
         else:
             return False
+
 
 def oblicz_P_lub_V(A1_point: Tuple, A2_point: Tuple, u: Tuple) -> Tuple:
     """
@@ -120,7 +127,8 @@ def oblicz_P_lub_V(A1_point: Tuple, A2_point: Tuple, u: Tuple) -> Tuple:
             return 0, p1, p2
     elif len(u.cor) == 3:
         if check(u, A1_point, A2_point):
-            return abs(A1_point.cor[0] - A2_point.cor[0]) * abs(A1_point.cor[1] - A2_point.cor[1]) * abs(A1_point.cor[2] - A2_point.cor[2]), p1, p2
+            return abs(A1_point.cor[0] - A2_point.cor[0]) * abs(A1_point.cor[1] - A2_point.cor[1]) * abs(
+                A1_point.cor[2] - A2_point.cor[2]), p1, p2
         else:
             return 0, p1, p2
 
@@ -168,6 +176,7 @@ def check_if_weight_sum_to_1(A1, A2, u):
     for i in x:
         suma += i[0]
     return suma
+
 
 # A1_point = Point([10,10,10])
 # u = Point([10,10,10])
@@ -223,20 +232,21 @@ def run_rsm(B0_points, A1_points, A2_points):
     dct_out = {}
 
     for point in B0_points:
-        dct_out[point]=skoring(point, A1_points, A2_points)
-    
+        dct_out[point] = skoring(point, A1_points, A2_points)
+
     print(dct_out.items())
 
-    dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1],reverse=True))
+    dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1], reverse=True))
 
     dct_out1 = {}
 
     for key in dct_out:
         if len(key.cor) == 2:
-            dct_out1[key.name] = [key.cor[0],key.cor[1]]
+            dct_out1[key.name] = [key.cor[0], key.cor[1]]
         if len(key.cor) == 3:
-            dct_out1[key.name] = [key.cor[0],key.cor[1],key.cor[2]]
-        
+            dct_out1[key.name] = [key.cor[0], key.cor[1], key.cor[2]]
+
     return dct_out1
+
 
 print(run_rsm(B0_points, A1_points, A2_points))
