@@ -17,7 +17,7 @@ class Point:
         return len(self.cor)
 
 
-crits_type = {'Marża [%]': 0, 'Prowizja [%]': 0, 'RRSO [%]': 0, 'Koszt miesięczny [PLN]': 1, 'Wkład własny [%]': 1,
+crits_type = {'Marża [%]': 0, 'Prowizja [%]': 0, 'RRSO [%]': 0, 'Koszt miesięczny [PLN]': 1, 'Wkład własny [%]': 0,
               'Opinie[pkt. Max. 5]': 1}
 
 lista_kryteriow = ['Punkt']
@@ -28,24 +28,22 @@ for k, v in crits_type.items():
     else:
         lista_kryteriow.append(k)
 
-print(lista_kryteriow)
 
-def get_citeria_list():
-    pass
-
-
-dane = pd.read_excel("dane.xlsx", 'Arkusz3')
+# dane = pd.read_excel("dane.xlsx", 'Arkusz3')
 
 # pref = np.array([1700, 20, -5])
 # pref_qwo = np.array([2300, 41, -1])
-pref = np.array([1.2, 15, -5])
-pref_qwo = np.array([3.5, 42, -1])
 
-A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref, pref_qwo, lista_kryteriow)
-
-A1_points = []
-A2_points = []
-B0_points = []
+# W gui zmienić na ujemne oceny
+# pref = np.array([1.2, 15, -6])
+# pref_qwo = np.array([3.5, 42, -1])
+#
+# A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref, pref_qwo,
+#                                                                                                       lista_kryteriow)
+#
+# A1_points = []
+# A2_points = []
+# B0_points = []
 
 # for i, row in enumerate(A1):
 #     print(len(row))
@@ -67,14 +65,14 @@ B0_points = []
 #         A1_points.append(Point([row[1], row[2]], row[0]))
 
 
-for i, row in enumerate(A1):
-    A1_points.append(Point([row[1], row[2], row[3]], row[0]))
-
-for i, row in enumerate(A2):
-    A2_points.append(Point([row[1], row[2], row[3]], row[0]))
-
-for i, row in enumerate(B0):
-    B0_points.append(Point([row[1], row[2], row[3]], row[0]))
+# for i, row in enumerate(A1):
+#     A1_points.append(Point([row[1], row[2], row[3]], row[0]))
+#
+# for i, row in enumerate(A2):
+#     A2_points.append(Point([row[1], row[2], row[3]], row[0]))
+#
+# for i, row in enumerate(B0):
+#     B0_points.append(Point([row[1], row[2], row[3]], row[0]))
 
 
 # A1_points = A1_points.tolist()
@@ -242,12 +240,49 @@ def skoring(u, A1, A2) -> Tuple:
     return F
 
 
+def fill_points(A1, A2, B0):
+    A1_points = []
+    A2_points = []
+    B0_points = []
+
+    for i, row in enumerate(A1):
+        if len(row) == 3:
+            A1_points.append(Point([row[1], row[2]], row[0]))
+        if len(row) == 4:
+            A1_points.append(Point([row[1], row[2], row[3]], row[0]))
+
+    for i, row in enumerate(A2):
+        if len(row) == 3:
+            A2_points.append(Point([row[1], row[2]], row[0]))
+        if len(row) == 4:
+            A2_points.append(Point([row[1], row[2], row[3]], row[0]))
+
+    for i, row in enumerate(B0):
+        if len(row) == 3:
+            B0_points.append(Point([row[1], row[2]], row[0]))
+        if len(row) == 4:
+            B0_points.append(Point([row[1], row[2], row[3]], row[0]))
+
+    return A1_points, A2_points, B0_points
+
+
 # Poniższa częśc kodu odpowiada za tworzenie rankingu
 # ranking jest zwracany w postaci List[Tuple(float, str')]
 # listy punktów od najlepszego do najgorszego
-def run_rsm(B0_points, A1_points, A2_points):
-    dct_out = {}
+def run_rsm(criteria):
+    #
+    # pref = np.array([1.2, 15, -6])
+    # pref_qwo = np.array([3.5, 42, -1])
+    pref = np.array([1.2, -6])
+    pref_qwo = np.array([3.5, -1])
 
+    A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref,
+                                                                                                          pref_qwo,
+                                                                                                          criteria)
+
+    A1_points, A2_points, B0_points = fill_points(A1, A2, B0)
+
+    dct_out = {}
     for point in B0_points:
         dct_out[point] = skoring(point, A1_points, A2_points)
 
@@ -264,4 +299,4 @@ def run_rsm(B0_points, A1_points, A2_points):
     return dct_out1
 
 
-print(run_rsm(B0_points, A1_points, A2_points))
+# print(run_rsm(lista_kryteriow))
