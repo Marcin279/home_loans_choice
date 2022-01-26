@@ -2,11 +2,12 @@ import pandas as pd
 from typing import List
 import numpy as np
 
-
+#slownik dla danych wejsciowych okreslajacy maksymalizacje/minimalizacje
 crits_type = {'Marża [%]':0, 'Prowizja [%]':0, 'RRSO [%]':0, 'Koszt miesięczny [PLN]':0, 'Wkład własny [%]':0, 'Opinie[pkt. Max. 5]':1}
+#slownik dla posortowania kryteriow
 columns_names_order = {'Marża [%]':1, 'Prowizja [%]':2, 'RRSO [%]':3, 'Koszt miesięczny [PLN]':4, 'Wkład własny [%]':5, 'Opinie[pkt. Max. 5]':6}
 
-
+#wyliczenie maksimum kryteriow
 def find_max(df):
     columns = list(df.columns)
     max_vals = []
@@ -15,7 +16,7 @@ def find_max(df):
         max_vals.append(col_vals.max())
     return max_vals
 
-
+#wyliczenie minimum kryteriow
 def find_min(df):
     columns = list(df.columns)
     min_vals = []
@@ -24,7 +25,7 @@ def find_min(df):
         min_vals.append(col_vals.min())
     return min_vals
 
-
+#znalezienie punktu idealnego
 def find_ideal(mins, maxs, is_max, crits):
     result = []
     for i in range(len(mins)):
@@ -34,7 +35,7 @@ def find_ideal(mins, maxs, is_max, crits):
             result.append(mins[i])
     return result
 
-
+#znalezienie punktu antyidealnego
 def find_inideal(mins, maxs, is_max, crits):
     result = []
     for i in range(len(mins)):
@@ -44,7 +45,7 @@ def find_inideal(mins, maxs, is_max, crits):
             result.append(maxs[i])
     return result
 
-
+#wyznaczanie funkcji uzytecznosci
 def find_use_funs(point_ideal, point_inideal, is_max, crits, num_of_divs=2):
     divs = []
     result = []
@@ -82,7 +83,7 @@ def find_use_funs(point_ideal, point_inideal, is_max, crits, num_of_divs=2):
 
     return result
 
-
+#robienie rankingu
 def make_ranking(df, funs_and_parts, crits):
     no_of_crits = len(funs_and_parts)
     all_u_values = []
@@ -112,7 +113,7 @@ def make_ranking(df, funs_and_parts, crits):
 
     return ranking
 
-    
+#inicjalizacja metody    
 def run(active_crits, path='dane.xlsx', exel_data_sheet='Arkusz3'):
     crits = []
     no_of_crits = len(active_crits)
