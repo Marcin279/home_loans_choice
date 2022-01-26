@@ -570,7 +570,8 @@ class RankingCalculations:
             self.uta_result = {}
         columns_names = {0: 'Marża [%]', 1: 'Prowizja [%]', 2: 'RRSO [%]', 3: 'Koszt miesięczny [PLN]',
                          4: 'Wkład własny [%]', 5: 'Opinie[pkt. Max. 5]'}
-        crits = ['Punkt']
+        # crits = ['Punkt']
+        crits = []
         for i in range(len(self.chosen_criteria)):
             if self.chosen_criteria[i]:
                 crits.append(columns_names[i])
