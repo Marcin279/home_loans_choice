@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, Tuple, List, Union, Optional
 from copy import deepcopy
-import src.punkty_odniesienia as po
+import punkty_odniesienia as po
 
 
 class Point:
@@ -303,3 +303,6 @@ def run_rsm(criteria):
 
 
 # print(run_rsm(lista_kryteriow))
+# kryteria = ['Punkt','Marża [%]','Wkład własny [%]','Opinie[pkt. Max. 5]']
+
+# print(run_rsm(kryteria))

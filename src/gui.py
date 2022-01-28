@@ -678,8 +678,8 @@ class RankingCalculations:
     def start_calculations(self, checkbutton_status: Dict, spiners_status: Dict):
         # Konwersja ze słownia do listy samych wartości
         status_list = [status.get() for status in list(checkbutton_status.values())]
-        spiners_status_list = 
-        print(spiners_status_list)
+        # spiners_status_list = 
+        # print(spiners_status_list)
 
         self.chosen_methods = []
         self.chosen_criteria = []
@@ -713,6 +713,7 @@ class RankingCalculations:
         pass
 
     def run_spcs(self):
+        kryteria = ['Koszt miesięczny [PLN]','Wkład własny [%]','Opinie[pkt. Max. 5]']
         # self.spcs_result =
         pass
 

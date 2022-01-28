@@ -12,6 +12,10 @@ def data(path, criteria):
     if 'Opinie[pkt. Max. 5]' in lista_kryt:
         flagi_kryt[-1] = 'max'
     my_data = pd.read_excel(path, sheet_name='Arkusz3', header=0)
+    if 'Prowizja [%]' in lista_kryt:
+        my_data = my_data['Prowizja [%]'].replace({'0.00':'0.000001'})
+    if 'Marża [%]' in lista_kryt:
+        my_data = my_data['Marża [%]'].replace({'0.00':'0.000001'})
     my_data = my_data[lista_kryt]
     my_data = my_data.values
     return my_data, flagi_kryt
@@ -343,34 +347,34 @@ def wyznaczenie_zbiorow(pref, pref_qwo, criteria):
     return A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, M, flagi
 
 
-# def main():
-#     pref = np.array([1.2, 15, -5])
-#     pref_qwo = np.array([3.5, 42, -1])
-#     A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, M, flagi = wyznaczenie_zbiorow(pref, pref_qwo)
-#
-#     print('Punkty najlepsze')
-#     print(A0)
-#     print('Wektor idealny', vec_ideal)
-#     print()
-#
-#     print('Punkty najgorzsze')
-#     print(A3)
-#     print('Wektor antyidealny', vec_anty_ideal)
-#     print()
-#
-#     print('Punkty preferencji nieosiągalnych:')
-#     print(A1)
-#     print('Wektor idealny z A1:', idealny_A1)
-#     print()
-#
-#     print('Punkty status QWO:')
-#     print(A2)
-#
-#     print('Wektor nadir z A2:', idealny_A2)
-#     print()
-#
-#     print('Pomiędzy A1 a A2')
-#     print(M)
-#
-#
-# main()
+def main():
+    pref = np.array([1.2, 15, -5])
+    pref_qwo = np.array([3.5, 42, -1])
+    A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, M, flagi = wyznaczenie_zbiorow(pref, pref_qwo,['Punkt', 'Marża [%]', 'Wkład własny [%]', 'Opinie[pkt. Max. 5]'])
+
+    print('Punkty najlepsze')
+    print(A0)
+    print('Wektor idealny', vec_ideal)
+    print()
+
+    print('Punkty najgorzsze')
+    print(A3)
+    print('Wektor antyidealny', vec_anty_ideal)
+    print()
+
+    print('Punkty preferencji nieosiągalnych:')
+    print(A1)
+    print('Wektor idealny z A1:', idealny_A1)
+    print()
+
+    print('Punkty status QWO:')
+    print(A2)
+
+    print('Wektor nadir z A2:', idealny_A2)
+    print()
+
+    print('Pomiędzy A1 a A2')
+    print(M)
+
+
+main()
