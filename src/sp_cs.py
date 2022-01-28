@@ -9,24 +9,26 @@ import math
 from scipy.fft import dct
 from src.data_processing import *
 import time
+import src.punkty_odniesienia as po
 
-dane = pd.read_excel("dane.xlsx", 'Arkusz3')
-marza = dane['Marża [%]'].tolist()
-prowizja = dane['Prowizja [%]'].tolist()
-rrso = dane['RRSO [%]'].tolist()
 
-# A1 = ['N33','N34','N1','N26','N28','N27']
-# A2 = ['N17','N49','N52','N21', 'N19','N17']
-A1 = ['N33']
-A2 = ['N49']
+# dane = pd.read_excel("dane.xlsx",'Arkusz3')
+# marza = dane['Marża [%]'].tolist()
+# prowizja = dane['Prowizja [%]'].tolist()
+# rrso = dane['RRSO [%]'].tolist()
 
-df_A1 = dane[dane['Punkt'].isin(A1)]
+# # A1 = ['N33','N34','N1','N26','N28','N27']
+# # A2 = ['N17','N49','N52','N21', 'N19','N17']
+# A1 = ['N33']
+# A2 = ['N49']
 
-df_A2 = dane[dane['Punkt'].isin(A2)]
+# df_A1 = dane[dane['Punkt'].isin(A1)]
 
-dane = dane[~dane["Punkt"].isin(A1)]
+# df_A2 = dane[dane['Punkt'].isin(A2)]
 
-dane = dane[~dane["Punkt"].isin(A2)]
+# dane = dane[~dane["Punkt"].isin(A1)]
+
+# dane = dane[~dane["Punkt"].isin(A2)]
 
 # print(dane)
 # print(dane.columns)
@@ -41,25 +43,24 @@ dane = dane[~dane["Punkt"].isin(A2)]
 # A1_point = Point([21,19,10])
 # u = Point([30,22,15])
 # A2_point = Point([55,40,30])
-x = 'Marża [%]'
-z = 'Opinie[pkt. Max. 5]'
-y = 'RRSO [%]'
+# x = 'Marża [%]'
+# z = 'Opinie[pkt. Max. 5]'
+# y = 'RRSO [%]'
 
-A1_points = []
+# A1_points = []
 
-for row in df_A1.iterrows():
-    A1_points.append(Point([row[1][z], row[1][y], row[1][x]], row[1]['Punkt']))
+# for row in df_A1.iterrows():
+#     A1_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
 
-A2_points = []
+# A2_points = []
 
-for row in df_A2.iterrows():
-    A2_points.append(Point([row[1][z], row[1][y], row[1][x]], row[1]['Punkt']))
+# for row in df_A2.iterrows():
+#     A2_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
 
-B0_points = []
+# B0_points = []
 
-for row in dane.iterrows():
-    B0_points.append(Point([row[1][z], row[1][y], row[1][x]], row[1]['Punkt']))
-
+# for row in dane.iterrows():
+#     B0_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
 
 class SP_CS:
     def __init__(self):
@@ -92,7 +93,7 @@ def oblicz_d(A1_point, A2_point):
 def krzywa_woronoya(A1_point, A2_point):
     d_ = oblicz_d(A1_point, A2_point)
     # print(d_)
-    if len(d_) == 1:
+    if type(d_) == float:
         d = d_
         f1 = []
         f2 = []
@@ -161,7 +162,11 @@ def odleglosc_od_prostej(u, A1_odc, A2_odc):
     p = np.asarray(u.cor)
     a = np.asarray(A1_odc.cor)
     b = np.asarray(A2_odc.cor)
-
+    if np.any(b - a) == 0:
+        if len(u.cor) == 3:
+            b = b + np.array([0.0001, 0.0001, 0.0001])
+        if len(u.cor) == 2:
+            b = b + np.array([0.0001, 0.0001, 0.0001])
     # normalized tangent vector
     d = np.divide(b - a, np.linalg.norm(b - a))
 
@@ -212,7 +217,10 @@ def sprawdz_czy_punkt_u_w_odcinku_AB(u, point_1, point_2):
 def point_on_line(u, a, b):
     au = np.array(u.cor) - np.array(a.cor)
     ab = np.array(b.cor) - np.array(a.cor)
-    t = np.dot(au, ab) / np.dot(ab, ab)
+    x = np.dot(ab, ab)
+    if x < 0.0001:
+        x = 0.0001
+    t = np.dot(au, ab) / x
     # if you need the the closest point belonging to the segment
     # t = max(0, min(1, t))
     # print('ab', ab, 'au', au, 't', t)
@@ -349,7 +357,11 @@ def oblicz_wspolczynnik_skoringowy(u, A1_point, A2_point):
         z_max = A2_point.cor[2]
         z_min = A1_point.cor[2]
         x = point_on_line(u, a, b)
-        return (x[2] - z_min) / (z_max - z_min)
+        if z_max - z_min < 0.0001:
+            c = 0.0001
+        else:
+            c = z_max - z_min
+        return (x[2] - z_min) / c
 
     # ob = krzywa_woronoya(A1_point,A2_point)
 
@@ -389,39 +401,117 @@ def oblicz_wspolczynnik_skoringowy(u, A1_point, A2_point):
 
 # print("odległość",oblicz_odleglosc(u, A1_point, A2_point))
 # print("współczynnik",oblicz_wspolczynnik_skoringowy(u, A1_point, A2_point) )
-def bubble_sort(list_1: list):
-    if not isinstance(list_1, list):
-        return None
-    n = len(list_1)
-    while n > 0:
-        for i in range(0, n - 1):
-            if list_1[i] < list_1[i + 1]:
-                el = list_1[i]
-                list_1[i] = list_1[i + 1]
-                list_1[i + 1] = el
-        n = n - 1
-    return list_1
+
+def fill_points(A1, A2, B0):
+    A1_points = []
+    A2_points = []
+    B0_points = []
+
+    for i, row in enumerate(A1):
+        if len(row) == 3:
+            A1_points.append(Point([row[1], row[2]], row[0]))
+        if len(row) == 4:
+            A1_points.append(Point([row[1], row[2], row[3]], row[0]))
+
+    for i, row in enumerate(A2):
+        if len(row) == 3:
+            A2_points.append(Point([row[1], row[2]], row[0]))
+        if len(row) == 4:
+            A2_points.append(Point([row[1], row[2], row[3]], row[0]))
+
+    for i, row in enumerate(B0):
+        if len(row) == 3:
+            B0_points.append(Point([row[1], row[2]], row[0]))
+        if len(row) == 4:
+            B0_points.append(Point([row[1], row[2], row[3]], row[0]))
+
+    return A1_points, A2_points, B0_points
 
 
-for point in B0_points:
-    suma = 0
-    for A1_point in A1_points:
-        for A2_point in A2_points:
-            suma += oblicz_wspolczynnik_skoringowy(point, A1_point, A2_point)
-            # krzywa_woronoya(point, A1_point, A2_point)
-            # print("wspol", oblicz_wspolczynnik_skoringowy(point,A1_point,A2_point))
-    point.skoring = suma
+lista_kryteriow = []
 
-dct_out = {}
 
-for point in B0_points:
-    dct_out[point] = point.skoring
+def run_sp_cs(criteria, quo=None):
+    #
+    global lista_kryteriow
+    lista_kryteriow = criteria
+    # pref = np.array([1.2, 15, -6])
+    # pref_qwo = np.array([3.5, 42, -1])
+    pref = np.array([0, 0, 15])
+    pref_qwo = np.array([3, 4, 45])
+    # C_2_6 + C_3_6
+    A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref,
+                                                                                                          pref_qwo,
+                                                                                                          criteria)
 
-dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1], reverse=True))
+    A1_points, A2_points, B0_points = fill_points(A1, A2, B0)
 
-dct_out1 = {}
+    if 'Opinie[pkt. Max. 5]' in lista_kryteriow:
+        if len(lista_kryteriow) == 3:
+            for point in A1_points:
+                point.cor[1] = -1 * point.cor[1]
+            for point in A2_points:
+                point.cor[1] = -1 * point.cor[1]
+            for point in B0_points:
+                point.cor[1] = -1 * point.cor[1]
 
-for key in dct_out:
-    dct_out1[key.name] = [key.cor[0], key.cor[1], key.cor[2]]
+        if len(lista_kryteriow) == 4:
+            for point in A1_points:
+                point.cor[2] = -1 * point.cor[2]
+            for point in A2_points:
+                point.cor[2] = -1 * point.cor[2]
+            for point in B0_points:
+                point.cor[2] = -1 * point.cor[2]
 
-print(dct_out1)
+    for point in B0_points:
+        suma = 0
+        for A1_point in A1_points:
+            for A2_point in A2_points:
+                suma += oblicz_wspolczynnik_skoringowy(point, A1_point, A2_point)
+                # krzywa_woronoya(point, A1_point, A2_point)
+                # print("wspol", oblicz_wspolczynnik_skoringowy(point,A1_point,A2_point))
+        point.skoring = suma
+
+    if 'Opinie[pkt. Max. 5]' in lista_kryteriow:
+        if len(lista_kryteriow) == 3:
+            for point in A1_points:
+                point.cor[1] = -1 * point.cor[1]
+            for point in A2_points:
+                point.cor[1] = -1 * point.cor[1]
+            for point in B0_points:
+                point.cor[1] = -1 * point.cor[1]
+
+        if len(lista_kryteriow) == 4:
+            for point in A1_points:
+                point.cor[2] = -1 * point.cor[2]
+            for point in A2_points:
+                point.cor[2] = -1 * point.cor[2]
+            for point in B0_points:
+                point.cor[2] = -1 * point.cor[2]
+
+    dct_out = {}
+
+    for point in B0_points:
+        dct_out[point] = point.skoring
+        print(point.skoring)
+
+    if 'Opinie[pkt. Max. 5]' in lista_kryteriow:
+        dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1], reverse=False))
+    else:
+        dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1], reverse=False))
+
+    dct_out1 = {}
+
+    for key in dct_out:
+        if len(key.cor) == 2:
+            dct_out1[key.name] = [key.cor[0], key.cor[1]]
+        elif len(key.cor) == 3:
+            dct_out1[key.name] = [key.cor[0], key.cor[1], key.cor[2]]
+
+    print(dct_out1)
+    return dct_out1
+
+
+kryteria = ['Punkt', 'Marża [%]', 'Prowizja [%]', 'Wkład własny [%]']
+
+run_sp_cs(kryteria)

@@ -242,3 +242,6 @@ def run_rsm(pref, pref_qwo, criteria):
     return dct_out1
 
 # print(run_rsm(lista_kryteriow))
+# kryteria = ['Punkt','Marża [%]','Wkład własny [%]','Opinie[pkt. Max. 5]']
+
+# print(run_rsm(kryteria))
