@@ -17,68 +17,8 @@ class Point:
         return len(self.cor)
 
 
-# crits_type = {'Marża [%]': 1, 'Prowizja [%]': 0, 'RRSO [%]': 0, 'Koszt miesięczny [PLN]': 1, 'Wkład własny [%]': 0,
-#               'Opinie[pkt. Max. 5]': 1}
-#
-# lista_kryteriow = ['Punkt']
-#
-# for k, v in crits_type.items():
-#     if v == 0:
-#         continue
-#     else:
-#         lista_kryteriow.append(k)
-
 lista_kryteriow = []
 
-# dane = pd.read_excel("dane.xlsx", 'Arkusz3')
-
-# pref = np.array([1700, 20, -5])
-# pref_qwo = np.array([2300, 41, -1])
-
-# W gui zmienić na ujemne oceny
-# pref = np.array([1.2, 15, -6])
-# pref_qwo = np.array([3.5, 42, -1])
-#
-# A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref, pref_qwo,
-#                                                                                                       lista_kryteriow)
-#
-# A1_points = []
-# A2_points = []
-# B0_points = []
-
-# for i, row in enumerate(A1):
-#     print(len(row))
-#     if len(row) == 3:
-#         A1_points.append(Point([row[1], row[2], row[3]], row[0]))
-#     if len(row) == 2:
-#         A1_points.append(Point([row[1], row[2]], row[0]))
-#
-# for i, row in enumerate(A2):
-#     if len(row) == 3:
-#         A1_points.append(Point([row[1], row[2], row[3]], row[0]))
-#     if len(row) == 2:
-#         A1_points.append(Point([row[1], row[2]], row[0]))
-#
-# for i, row in enumerate(B0):
-#     if len(row) == 3:
-#         A1_points.append(Point([row[1], row[2], row[3]], row[0]))
-#     if len(row) == 2:
-#         A1_points.append(Point([row[1], row[2]], row[0]))
-
-
-# for i, row in enumerate(A1):
-#     A1_points.append(Point([row[1], row[2], row[3]], row[0]))
-#
-# for i, row in enumerate(A2):
-#     A2_points.append(Point([row[1], row[2], row[3]], row[0]))
-#
-# for i, row in enumerate(B0):
-#     B0_points.append(Point([row[1], row[2], row[3]], row[0]))
-
-
-# A1_points = A1_points.tolist()
-# A2_points = A2_points.tolist()
-# B0_points = B0_points.tolist()
 
 def check(u, point_A1, point_A2) -> bool:
     """
@@ -270,14 +210,14 @@ def fill_points(A1, A2, B0):
 # Poniższa częśc kodu odpowiada za tworzenie rankingu
 # ranking jest zwracany w postaci List[Tuple(float, str')]
 # listy punktów od najlepszego do najgorszego
-def run_rsm(criteria):
+def run_rsm(pref, pref_qwo, criteria):
     #
     global lista_kryteriow
     lista_kryteriow = criteria
     # pref = np.array([1.2, 15, -6])
     # pref_qwo = np.array([3.5, 42, -1])
-    pref = np.array([1.2, -6])
-    pref_qwo = np.array([3.5, -1])
+    # pref = np.array([1.2, -6])
+    # pref_qwo = np.array([3.5, -1])
     # C_2_6 + C_3_6
     A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref,
                                                                                                           pref_qwo,
@@ -300,6 +240,5 @@ def run_rsm(criteria):
             dct_out1[key.name] = [key.cor[0], key.cor[1], key.cor[2]]
 
     return dct_out1
-
 
 # print(run_rsm(lista_kryteriow))
