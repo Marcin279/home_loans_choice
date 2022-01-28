@@ -361,7 +361,11 @@ def oblicz_wspolczynnik_skoringowy(u,A1_point,A2_point):
         z_max = A2_point.cor[2]
         z_min = A1_point.cor[2]
         x = point_on_line(u, a, b)
-        return (x[2]-z_min)/(z_max-z_min)   
+        if z_max-z_min < 0.0001:
+            c = 0.0001
+        else:
+            c = z_max-z_min
+        return (x[2]-z_min)/c  
 
 
 # ob = krzywa_woronoya(A1_point,A2_point)
@@ -434,8 +438,8 @@ def run_sp_cs(criteria, quo = None):
     lista_kryteriow = criteria
     # pref = np.array([1.2, 15, -6])
     # pref_qwo = np.array([3.5, 42, -1])
-    pref = np.array([0, -6])
-    pref_qwo = np.array([3 ,-1])
+    pref = np.array([0, 0, 15])
+    pref_qwo = np.array([3, 4, 45])
     # C_2_6 + C_3_6
     A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref,
                                                                                                           pref_qwo,
@@ -488,8 +492,10 @@ def run_sp_cs(criteria, quo = None):
 
     dct_out = {}
 
+
     for point in B0_points:
         dct_out[point]=point.skoring
+        print(point.skoring)
 
     if 'Opinie[pkt. Max. 5]' in lista_kryteriow:
         dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1],reverse=False))
@@ -508,6 +514,6 @@ def run_sp_cs(criteria, quo = None):
     return dct_out1
 
 
-# kryteria = ['Punkt', 'Marża [%]',  'Opinie[pkt. Max. 5]']
+kryteria = ['Punkt', 'Marża [%]',  'Prowizja [%]', 'Wkład własny [%]']
 
-# run_sp_cs(kryteria)
+run_sp_cs(kryteria)
