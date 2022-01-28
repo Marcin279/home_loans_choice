@@ -351,21 +351,34 @@ def wyznaczenie_zbiorow(pref, pref_qwo, criteria):
 #     pref = np.array([1.2, 15, -5])
 #     pref_qwo = np.array([3.5, 42, -1])
 #     A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, M, flagi = wyznaczenie_zbiorow(pref, pref_qwo,['Punkt', 'Marża [%]', 'Wkład własny [%]', 'Opinie[pkt. Max. 5]'])
+
 #
+
+
+
 #     print('Punkty najlepsze')
 #     print(A0)
 #     print('Wektor idealny', vec_ideal)
 #     print()
+
 #
+
+
+
 #     print('Punkty najgorzsze')
 #     print(A3)
 #     print('Wektor antyidealny', vec_anty_ideal)
 #     print()
+
 #
+
+
+
 #     print('Punkty preferencji nieosiągalnych:')
 #     print(A1)
 #     print('Wektor idealny z A1:', idealny_A1)
 #     print()
+
 #
 #     print('Punkty status QWO:')
 #     print(A2)
@@ -377,4 +390,17 @@ def wyznaczenie_zbiorow(pref, pref_qwo, criteria):
 #     print(M)
 #
 #
+
+
+#     print('Punkty status QWO:')
+#     print(A2)
+
+#     print('Wektor nadir z A2:', idealny_A2)
+#     print()
+
+#     print('Pomiędzy A1 a A2')
+#     print(M)
+
+
+
 # main()

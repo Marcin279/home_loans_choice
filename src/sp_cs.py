@@ -493,7 +493,7 @@ def run_sp_cs(criteria, quo=None):
 
     for point in B0_points:
         dct_out[point] = point.skoring
-        print(point.skoring)
+        # print(point.skoring)
 
     if 'Opinie[pkt. Max. 5]' in lista_kryteriow:
         dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1], reverse=False))
@@ -508,7 +508,7 @@ def run_sp_cs(criteria, quo=None):
         elif len(key.cor) == 3:
             dct_out1[key.name] = [key.cor[0], key.cor[1], key.cor[2]]
 
-    print(dct_out1)
+    # print(dct_out1)
     return dct_out1
 
 
