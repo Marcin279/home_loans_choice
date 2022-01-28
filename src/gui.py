@@ -10,9 +10,9 @@ import pandas as pd
 # import matplotlib
 # matplotlib.use('TkAgg')
 from typing import List, Tuple, Optional, Union, Dict
-import src.uta_star as uta_star
-import src.rsm as rsm
-import src.punkty_odniesienia as po
+import uta_star as uta_star
+import rsm as rsm
+import punkty_odniesienia as po
 
 # PROJECT_PATH = pathlib.Path(__file__).parent
 # PROJECT_UI = PROJECT_PATH / "gui_designer.ui"
@@ -118,6 +118,8 @@ class GuiDesignerApp:
         self.figure = None
 
         self.chbut_status = {}
+        self.spins_status = {}
+        self.ranges = {}
 
         self.window = tk.Frame(master)
         self.wybor_kryteriow = None
@@ -131,9 +133,8 @@ class GuiDesignerApp:
         self.active_crits_num = 0
         self.active_meths_num = 0
 
-        self.window.configure(height='900', width='1600')
+        self.window.configure(height='1000', width='1600')
         self.window.pack(padx='40', pady='20', side='top')
-        # self.window.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
 
         # Main widget
         self.mainwindow = self.window
@@ -158,27 +159,31 @@ class GuiDesignerApp:
         for i in range(liczba_kryt + liczba_metod):
             self.chbut_status[i] = tk.IntVar()
 
+        self.invisible_text = tk.Label(self.wybor_kryteriow, height='1', text=' ',  font=("Arial", 10, 'bold'), width='1')
+        self.invisible_text.pack(side='top', anchor='w')
+
         self.checkbutton0 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[0], variable=self.chbut_status[0],
                                            command=lambda: self.update_check())
-        self.checkbutton0.pack(side='top', anchor='w')
+        self.checkbutton0.pack(side='top', pady='3', padx='1', anchor='w')
         self.checkbutton1 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[1], variable=self.chbut_status[1],
                                            command=lambda: self.update_check())
         self.checkbutton1.pack(side='top', anchor='w')
         self.checkbutton2 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[2], variable=self.chbut_status[2],
                                            command=lambda: self.update_check())
-        self.checkbutton2.pack(side='top', anchor='w')
+        self.checkbutton2.pack(side='top', pady='3', padx='1', anchor='w')
         self.checkbutton3 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[3], variable=self.chbut_status[3],
                                            command=lambda: self.update_check())
-        self.checkbutton3.pack(side='top', anchor='w')
+        self.checkbutton3.pack(side='top', pady='3',  padx='1', anchor='w')
         self.checkbutton4 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[4], variable=self.chbut_status[4],
                                            command=lambda: self.update_check())
-        self.checkbutton4.pack(side='top', anchor='w')
+        self.checkbutton4.pack(side='top', pady='3',  padx='1', anchor='w')
         self.checkbutton5 = tk.Checkbutton(self.wybor_kryteriow, text=kryteria[5], variable=self.chbut_status[5],
                                            command=lambda: self.update_check())
-        self.checkbutton5.pack(side='top', anchor='w')
+        self.checkbutton5.pack(side='top', pady='3',  padx='1', anchor='w')
 
-        self.wybor_kryteriow.configure(height='50', text='KRYTERIA', width='40', labelanchor='n')
-        self.wybor_kryteriow.grid(column='0', padx='5', pady='5', row='1', sticky='n')
+        self.wybor_kryteriow.configure(height='215', relief='raised', text='KRYTERIA', font=("Arial", 10, 'bold'), width='150', labelanchor='n')
+        self.wybor_kryteriow.grid(column='0', padx='40', pady='5', row='1', sticky='n')
+        self.wybor_kryteriow.pack_propagate(0)
 
         # częśc kodu odpowiadająca za wybór metody
         self.wybor_metody = tk.LabelFrame(self.window)
@@ -188,17 +193,21 @@ class GuiDesignerApp:
         # self.label4.configure(text='label4')
         # self.label4.pack(side='top')
 
-        self.checkbutton6 = tk.Checkbutton(self.wybor_metody, text=metody[0], variable=self.chbut_status[6])
-        self.checkbutton6.pack(side='top', anchor='w')
-        self.checkbutton7 = tk.Checkbutton(self.wybor_metody, text=metody[1], variable=self.chbut_status[7])
-        self.checkbutton7.pack(side='top', anchor='w')
-        self.checkbutton8 = tk.Checkbutton(self.wybor_metody, text=metody[2], variable=self.chbut_status[8])
-        self.checkbutton8.pack(side='top', anchor='w')
-        self.checkbutton9 = tk.Checkbutton(self.wybor_metody, text=metody[3], variable=self.chbut_status[9])
-        self.checkbutton9.pack(side='top', anchor='w')
+        self.invisible_text = tk.Label(self.wybor_metody, height='1', text=' ',  font=("Arial", 10, 'bold'), width='1')
+        self.invisible_text.pack(side='top', anchor='w')
 
-        self.wybor_metody.configure(height='50', relief='raised', text='METODY', width='25', labelanchor='n')
-        self.wybor_metody.grid(column='1', padx='5', pady='5', row='1', sticky='n')
+        self.checkbutton6 = tk.Checkbutton(self.wybor_metody, text=metody[0], variable=self.chbut_status[6], command=lambda: self.update_check())
+        self.checkbutton6.pack(side='top', pady='3', padx='1', anchor='w')
+        self.checkbutton7 = tk.Checkbutton(self.wybor_metody, text=metody[1], variable=self.chbut_status[7], command=lambda: self.update_check())
+        self.checkbutton7.pack(side='top', pady='3', padx='1', anchor='w')
+        self.checkbutton8 = tk.Checkbutton(self.wybor_metody, text=metody[2], variable=self.chbut_status[8], command=lambda: self.update_check())
+        self.checkbutton8.pack(side='top', pady='3', padx='1', anchor='w')
+        self.checkbutton9 = tk.Checkbutton(self.wybor_metody, text=metody[3], variable=self.chbut_status[9], command=lambda: self.update_check())
+        self.checkbutton9.pack(side='top', pady='3', padx='1', anchor='w')
+
+        self.wybor_metody.configure(height='215', relief='raised', text='METODY', font=("Arial", 10, 'bold'), width='150', labelanchor='n')
+        self.wybor_metody.grid(column='2', padx='40', pady='5', row='1', sticky='n')
+        self.wybor_metody.pack_propagate(0)
 
         # Ta część kodu odopowiada za przełączenie się na wybrany ekran metody
         self.labelframe1 = tk.LabelFrame(self.window)
@@ -207,48 +216,193 @@ class GuiDesignerApp:
         self.text4.configure(width='20')
         self.text4.grid(column='2', row='2', sticky='nw')
 
-        self.labelframe1.configure(height='200', text='ranking', width='150')
-        self.labelframe1.grid(column='2', row='1', sticky='n')
+        self.labelframe1.configure(height='500', text='RANKING', font=("Arial", 10, 'bold'), width='250', labelanchor='n')
+        self.labelframe1.grid(column='2', row='2',pady='20',padx='20', sticky='n')
+        self.labelframe1.pack_propagate(0)
 
         self.labelframe2 = tk.LabelFrame(self.window)
         self.button2 = tk.Button(self.labelframe2)
         self.button2.configure(text='Dane')
         self.button2.pack(side='left')
 
-        self.button3 = tk.Button(self.labelframe2, text='RSM')
-        self.button3.configure(command=lambda: self.plot_values(self.data_RSM))
-        self.button3.pack(side='left')
-
-        self.button6 = tk.Button(self.labelframe2, text='SP-CS')
-        self.button6.configure(command=lambda: self.plot_values(self.data_SP_CS))
-        self.button6.pack(side='left')
-
-        self.button7 = tk.Button(self.labelframe2, text='TOPSIS')
-        self.button7.configure(command=lambda: self.plot_values(self.data_TOPSIS))
-        self.button7.pack(side='left')
-
         self.refresh_button = tk.Button(self.labelframe2, text='Refresh')
         self.refresh_button.configure(command=self.refresh)
         self.refresh_button.pack(side='left')
 
-        self.labelframe2.configure(height='200', text='MENU', width='200')
+        self.labelframe2.configure(height='200', text='MENU',  font=("Arial", 10, 'bold'), width='200')
         self.labelframe2.grid(column='0', row='0', sticky='n')
 
         self.labelframe3 = tk.LabelFrame(self.window)
-        self.labelframe3.configure(height='300', text='Wykres', width='300')
-        self.labelframe3.grid(column='1', padx='10', pady='10', row='2')
+        self.labelframe3.configure(height='400', text='WYKRES DANYCH', font=("Arial", 10, 'bold'), width='400', labelanchor='n')
+        self.labelframe3.grid(column='0', padx='40', pady='20', row='2', columnspan='2', rowspan='2')
 
         self.labelframe4 = tk.LabelFrame(self.window)
         self.button8 = tk.Button(self.labelframe4)
-        self.button8.configure(cursor='arrow', font='{Arial CE} 12 {bold}', text='Licz', command=self.licz_button)
+        self.button8.configure(cursor='arrow', width='15', height='2', font='{Arial CE} 12 {bold}', text='UTWÓRZ RANKING', command=self.licz_button)
         self.button8.pack(side='top')
         self.labelframe4.configure(height='200', width='200')
-        self.labelframe4.grid(column='1', row='3')
+        self.labelframe4.grid(column='2', row='3', pady='90')
+
+        self.labelframe5 = tk.LabelFrame(self.window)
+        self.labelframe5.configure(height='700', relief='raised', text='DODATKOWE PARAMETRY', font=("Arial", 10, 'bold'), width='700', labelanchor='n')
+        self.labelframe5.grid(column='1', row='1', padx='20', pady='5', sticky='n')
+        
+        # Obsługa spinboxów 
+        columns_names = ['Marża [%]', 'Prowizja [%]', 'RRSO [%]', 'Koszt miesięczny [PLN]', 'Wkład własny [%]', 'Opinie[pkt. Max. 5]', 'Punkt']
+        df = pd.read_excel(io='dane.xlsx', sheet_name='Arkusz3', index_col=0, usecols=columns_names)
+        text_font = ("Courier", 14)
+
+        for i, crit in enumerate(columns_names[:-1]):
+            dec = 2
+            if i == 0:
+                crit1_text = tk.Label(master=self.labelframe5, text="[%]", font=text_font)
+                crit1_text.grid(row='1', column='2')
+            elif i == 1:
+                crit2_text = tk.Label(master=self.labelframe5, text="[%]", font=text_font)
+                crit2_text.grid(row='2', column='2')
+            elif i == 2:
+                crit3_text = tk.Label(master=self.labelframe5, text="[%]", font=text_font)
+                crit3_text.grid(row='3', column='2')
+            elif i == 3:
+                crit4_text = tk.Label(master=self.labelframe5, text="[PLN]", font=text_font) 
+                crit4_text.grid(row='4', column='2')
+                crit_vals = df[crit]
+                min_val = crit_vals.min()
+                max_val = crit_vals.max()
+                first_range = (np.linspace(min_val, min_val+(max_val-min_val)/2, 50)).astype('int')
+                second_range = (np.linspace(min_val+(max_val-min_val)/2, max_val, 50)).astype('int')
+                self.ranges[i] = [tuple(first_range), tuple(second_range)]
+                self.spins_status[i] = [tk.StringVar(), tk.StringVar()]
+                continue
+            elif i == 4:
+                crit5_text = tk.Label(master=self.labelframe5, text="[%]", font=text_font)
+                crit5_text.grid(row='5', column='2')
+            elif i == 5:
+                crit6_text = tk.Label(master=self.labelframe5, text="[-]", font=text_font)
+                crit6_text.grid(row='6', column='2')
+                crit_vals = df[crit]
+                min_val = crit_vals.min()
+                max_val = crit_vals.max()
+                first_range = np.around(np.linspace(min_val, min_val+(max_val-min_val)/2, 50), decimals=dec)
+                second_range = np.around(np.linspace(min_val+(max_val-min_val)/2, max_val, 50), decimals=dec)
+                self.ranges[i] = [tuple(second_range), tuple(first_range)]
+                self.spins_status[i] = [tk.StringVar(), tk.StringVar()]
+                continue
+
+            crit_vals = df[crit]
+            min_val = crit_vals.min()
+            max_val = crit_vals.max()
+            first_range = np.around(np.linspace(min_val, min_val+(max_val-min_val)/2, 50), decimals=dec)
+            second_range = np.around(np.linspace(min_val+(max_val-min_val)/2, max_val, 50), decimals=dec)
+            self.ranges[i] = [tuple(first_range), tuple(second_range)]
+            self.spins_status[i] = [tk.StringVar(), tk.StringVar()]
+            #self.spins_status[i] = [tk.StringVar(value=str(first_range[49])), tk.StringVar(value=str(second_range[49]))]
+
+        legend1_text = tk.Label(master=self.labelframe5, text="Punkt quo-1", font=("Arial", 8))
+        legend1_text.grid(row='0', column='0')
+
+        legend2_text = tk.Label(master=self.labelframe5, text="Punkt quo-2", font=("Arial", 8))
+        legend2_text.grid(row='0', column='1')
+
+        legend3_text = tk.Label(master=self.labelframe5, text="Jednostki", font=("Arial", 8))
+        legend3_text.grid(row='0', column='2')
+
+        self.spinbox0 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[0][0], textvariable=self.spins_status[0][0], command=lambda:self.update_spinbox())
+        self.spinbox0.grid(row='1', column='0', padx='10', pady='5')
+
+        self.spinbox1 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[0][1], textvariable=self.spins_status[0][1], command=lambda:self.update_spinbox())
+        self.spinbox1.grid(row='1', column='1', padx='10', pady='5')
+
+        self.spinbox2 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[1][0], textvariable=self.spins_status[1][0], command=lambda:self.update_spinbox())
+        self.spinbox2.grid(row='2', column='0', padx='10', pady='5')
+
+        self.spinbox3 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[1][1], textvariable=self.spins_status[1][1], command=lambda:self.update_spinbox())
+        self.spinbox3.grid(row='2', column='1', padx='10', pady='5')
+
+        self.spinbox4 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[2][0], textvariable=self.spins_status[2][0], command=lambda:self.update_spinbox())
+        self.spinbox4.grid(row='3', column='0', padx='10', pady='5')
+
+        self.spinbox5 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[2][1], textvariable=self.spins_status[2][1], command=lambda:self.update_spinbox())
+        self.spinbox5.grid(row='3', column='1', padx='10', pady='5')
+
+        self.spinbox6 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[3][0], textvariable=self.spins_status[3][0], command=lambda:self.update_spinbox())
+        self.spinbox6.grid(row='4', column='0', padx='10', pady='5')
+
+        self.spinbox7 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[3][1], textvariable=self.spins_status[3][1], command=lambda:self.update_spinbox())
+        self.spinbox7.grid(row='4', column='1', padx='10', pady='5')
+
+        self.spinbox8 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[4][0], textvariable=self.spins_status[4][0], command=lambda:self.update_spinbox())
+        self.spinbox8.grid(row='5', column='0', padx='10', pady='5')
+
+        self.spinbox9 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[4][1], textvariable=self.spins_status[4][1], command=lambda:self.update_spinbox())
+        self.spinbox9.grid(row='5', column='1', padx='10', pady='5')
+
+        self.spinbox10 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[5][0], textvariable=self.spins_status[5][0], command=lambda:self.update_spinbox())
+        self.spinbox10.grid(row='6', column='0', padx='10', pady='5')
+
+        self.spinbox11 = tk.Spinbox(master=self.labelframe5, width=5, values=self.ranges[5][1], textvariable=self.spins_status[5][1], command=lambda:self.update_spinbox())
+        self.spinbox11.grid(row='6', column='1', padx='10', pady='5')
+
+        self.update_spinbox()
+
+    def update_spinbox(self):
+        conv_crits_status = [status.get() for status in list(self.chbut_status.values())]
+
+        if any(conv_crits_status[6:9]):
+            if conv_crits_status[0]:
+                self.spinbox0.config(state='normal')
+                self.spinbox1.config(state='normal')
+            else:
+                self.spinbox0.config(state='disabled')
+                self.spinbox1.config(state='disabled')
+            if conv_crits_status[1]:
+                self.spinbox2.config(state='normal')
+                self.spinbox3.config(state='normal')
+            else:
+                self.spinbox2.config(state='disabled')
+                self.spinbox3.config(state='disabled')
+            if conv_crits_status[2]:
+                self.spinbox4.config(state='normal')
+                self.spinbox5.config(state='normal')
+            else:
+                self.spinbox4.config(state='disabled')
+                self.spinbox5.config(state='disabled')
+            if conv_crits_status[3]:
+                self.spinbox6.config(state='normal')
+                self.spinbox7.config(state='normal')
+            else:
+                self.spinbox6.config(state='disabled')
+                self.spinbox7.config(state='disabled')
+            if conv_crits_status[4]:
+                self.spinbox8.config(state='normal')
+                self.spinbox9.config(state='normal')
+            else:
+                self.spinbox8.config(state='disabled')
+                self.spinbox9.config(state='disabled')
+            if conv_crits_status[5]:
+                self.spinbox10.config(state='normal')
+                self.spinbox11.config(state='normal')
+            else:
+                self.spinbox10.config(state='disabled')
+                self.spinbox11.config(state='disabled')
+        else:
+            self.spinbox0.config(state='disabled')
+            self.spinbox1.config(state='disabled')
+            self.spinbox2.config(state='disabled')
+            self.spinbox3.config(state='disabled')
+            self.spinbox4.config(state='disabled')
+            self.spinbox5.config(state='disabled')
+            self.spinbox6.config(state='disabled')
+            self.spinbox7.config(state='disabled')
+            self.spinbox8.config(state='disabled')
+            self.spinbox9.config(state='disabled')
+            self.spinbox10.config(state='disabled')
+            self.spinbox11.config(state='disabled')
+        
 
     def update_check(self):
-        self.conv_crits_status = [status.get() for status in list(self.chbut_status.values())][:-4]
+        conv_crits_status = [status.get() for status in list(self.chbut_status.values())][:-4]
 
-        conv_crits_status = self.conv_crits_status
         self.plot_current_data()
 
         if conv_crits_status.count(1) == 3:
@@ -272,6 +426,8 @@ class GuiDesignerApp:
             self.checkbutton4.configure(state='normal')
             self.checkbutton5.configure(state='normal')
 
+        self.update_spinbox()
+
     def licz_button(self):
         conv_crits_status = [status.get() for status in list(self.chbut_status.values())]
         if conv_crits_status[:-4].count(1) == 0 and conv_crits_status[6:].count(1) == 0:
@@ -282,8 +438,9 @@ class GuiDesignerApp:
             messagebox.showerror('Błąd', 'Musisz wybrać przynajmniej jedną metodę!')
         else:
             status_dict = self.give_statusdict()
+            status_dict2 = self.give_statusdict2()
             # print(status_dict)
-            self.calculator.start_calculations(status_dict)
+            self.calculator.start_calculations(status_dict, status_dict2)
             # print('print', self.calculator.rsm_result)
             self.data_RSM = self.calculator.rsm_result
             self.data_UTA = self.calculator.uta_result
@@ -322,9 +479,8 @@ class GuiDesignerApp:
 
         self.labelframe3.destroy()
         self.labelframe3 = tk.LabelFrame(self.window)
-        self.labelframe3.configure(height='300', text='Wykres', width='300')
-
-        self.labelframe3.grid(column='1', padx='10', pady='10', row='2')
+        self.labelframe3.configure(height='400', text='WYKRES DANYCH', font=("Arial", 10, 'bold'), width='400', labelanchor='n')
+        self.labelframe3.grid(column='0', padx='40', pady='20', row='2', columnspan='2', rowspan='2')
 
         self.labelframe3.pack_propagate(0)  # Don't allow the widgets inside to determine the frame's width / height
 
@@ -350,7 +506,7 @@ class GuiDesignerApp:
         x = data.values()
         y = [0] * len(x)
 
-        figure1 = plt.Figure(figsize=(2, 3), dpi=100)
+        figure1 = plt.Figure(figsize=(2, 4), dpi=100)
         fig = figure1.add_subplot(111)
         canvas = FigureCanvasTkAgg(figure1, master=self.labelframe3)
         canvas.get_tk_widget().pack(fill='both')
@@ -367,7 +523,7 @@ class GuiDesignerApp:
         x = [tab[0] for tab in list(data.values())]
         y = [tab[1] for tab in list(data.values())]
 
-        figure1 = plt.Figure(figsize=(2, 3), dpi=100)
+        figure1 = plt.Figure(figsize=(2, 4), dpi=100)
         fig = figure1.add_subplot(111)
         canvas = FigureCanvasTkAgg(figure1, master=self.labelframe3)
         canvas.get_tk_widget().pack(fill='both')
@@ -498,12 +654,17 @@ class GuiDesignerApp:
     def give_statusdict(self):
         return self.chbut_status
 
+    def give_statusdict2(self):
+        return self.spins_status
+
 
 class RankingCalculations:
     def __init__(self):
         self.chosen_methods = []
         # [data.columns]
         self.chosen_criteria = []
+        self.quo1 = []
+        self.quo2 = []
 
         self.topsis_result = {}
         self.topsis_time = []
@@ -514,12 +675,16 @@ class RankingCalculations:
         self.uta_result = {}
         self.uta_time = []
 
-    def start_calculations(self, checkbutton_status: Dict):
+    def start_calculations(self, checkbutton_status: Dict, spiners_status: Dict):
         # Konwersja ze słownia do listy samych wartości
         status_list = [status.get() for status in list(checkbutton_status.values())]
+        spiners_status_list = 
+        print(spiners_status_list)
 
         self.chosen_methods = []
         self.chosen_criteria = []
+        self.quo1 = [float(stat[0].get()) for stat in spiners_status.values()]
+        self.quo2 = [float(stat[1].get()) for stat in spiners_status.values()]
 
         # Wypełnienie list metod i kryteriów
         for i in range(len(kryteria)):
@@ -559,9 +724,13 @@ class RankingCalculations:
                          4: 'Wkład własny [%]', 5: 'Opinie[pkt. Max. 5]'}
 
         crits = ['Punkt']
+        chosen_quo1 = []
+        chosen_quo2 = []
         for i in range(len(self.chosen_criteria)):
             if self.chosen_criteria[i]:
                 crits.append(columns_names[i])
+                chosen_quo1.append(self.quo1[i])
+                chosen_quo2.append(self.quo2[i])
         self.rsm_result = rsm.run_rsm(crits)
 
     def run_uta(self):
@@ -603,15 +772,15 @@ class RankingCalculations:
 #     app.run()
 
 
-# if __name__ == '__main__':
-#     root = tk.Tk()
-#     # print('rsm', calculator.rsm_result)
-#     # dataRSM = calculator.rsm_result
-#     # dataSPCS = calculator.spcs_result
-#     # dataTopsis = calculator.topsis_result
-#     # dataUTA = calculator.uta_result
-#     app = GuiDesignerApp(root)
-#     calculator = RankingCalculations()
-#     # print(app.data_RSM)
-#     # print(dataSPCS.keys())
-#     app.run()
+if __name__ == '__main__':
+    root = tk.Tk()
+    # print('rsm', calculator.rsm_result)
+    # dataRSM = calculator.rsm_result
+    # dataSPCS = calculator.spcs_result
+    # dataTopsis = calculator.topsis_result
+    # dataUTA = calculator.uta_result
+    app = GuiDesignerApp(root)
+    calculator = RankingCalculations()
+    # print(app.data_RSM)
+    # print(dataSPCS.keys())
+    app.run()
