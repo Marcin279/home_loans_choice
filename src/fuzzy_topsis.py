@@ -81,19 +81,3 @@ def run_topsis(pref, pref_qwo, lista_kryteriow):
                                                                                                              lista_kryteriow)
     return topsis_fuzzy(M, idealny_A1, antyidealny_A2, flagi)
 
-# Przykład wywołania:
-# def main():
-
-
-#     pref = np.array([1.99, 15, -4, 1])
-#     pref_qwo = np.array([2.3, 42, -3.5])
-#     A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, antyidealny_A2, M, flagi = po.wyznaczenie_zbiorow(pref, pref_qwo)
-
-#     topsis_fuzzy(M, idealny_A1, antyidealny_A2, flagi)
-
-
-#     return None
-
-
-# if __name__ == "__main__":
-#     main()

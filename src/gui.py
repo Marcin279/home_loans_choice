@@ -628,7 +628,6 @@ class GuiDesignerApp:
         :return:
         """
         values = list(data.values())
-        print(values)
         if len(values[0]) == 3:
             self.figure = self.plot_3d(data)
         elif len(values[0]) == 2:
@@ -709,21 +708,7 @@ class RankingCalculations:
         for i in range(len(metody)):
             self.chosen_methods.append(status_list.pop(0))
 
-        # print(self.chosen_methods)
-        # print(self.chosen_criteria)
-
-        # Wywołanie wybranego algorytmu obliczającego ranking
-        # if self.chosen_methods[0] == 1:
-        #     self.run_topsis()
-        # if self.chosen_methods[1] == 1:
-        #     self.run_spcs()
-        # if self.chosen_methods[2] == 1:
-        #     self.run_rsm()
-        # if self.chosen_methods[3] == 1:
-        #     self.run_uta()
         self.give_results()
-
-        print("Obliczenia rozpoczęte")
 
     def run_topsis(self):
         if self.topsis_result != {}:
@@ -801,29 +786,3 @@ class RankingCalculations:
 
     def reset_selfvals(self):
         pass
-
-
-# def test_gui():
-#     root = tk.Tk()
-#     dataRSM = generete_data()
-#     dataSPCS = generete_data(dim3=True)
-#     dataTopsis = generete_data()
-#     app = GuiDesignerApp(root, data_RSM=dataRSM, data_SP_CS=dataSPCS, data_TOPSIS=dataTopsis)
-#     calculator = RankingCalculations()
-#     # print(app.data_RSM)
-#     # print(dataSPCS.keys())
-#     app.run()
-
-
-if __name__ == '__main__':
-    root = tk.Tk()
-    # print('rsm', calculator.rsm_result)
-    # dataRSM = calculator.rsm_result
-    # dataSPCS = calculator.spcs_result
-    # dataTopsis = calculator.topsis_result
-    # dataUTA = calculator.uta_result
-    app = GuiDesignerApp(root)
-    calculator = RankingCalculations()
-    # print(app.data_RSM)
-    # print(dataSPCS.keys())
-    app.run()

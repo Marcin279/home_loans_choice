@@ -134,17 +134,7 @@ def check_if_weight_sum_to_1(A1, A2, u):
     return suma
 
 
-# A1_point = Point([10,10,10])
-# u = Point([10,10,10])
-# A2_point = Point([30,30,30])
-
-
-# suma = check_if_weight_sum_to_1([A1_point], [A2_point], u)
-# print("Sprawdzenie czy suma ", suma)
-
-
-# print(check(dct['N21'],dct['N11'],dct['N16']))
-def distance(u: Tuple, A: Tuple) -> float:
+def distance(u: Tuple, A) -> float:
     """
     Funkcja obliczająca dystans z punktu u do A
     params: u - Tuple(int, int)
@@ -212,14 +202,9 @@ def fill_points(A1, A2, B0):
 # listy punktów od najlepszego do najgorszego
 
 def run_rsm(pref, pref_qwo, criteria):
-    #
     global lista_kryteriow
     lista_kryteriow = criteria
-    # pref = np.array([1.2, 15, -6])
-    # pref_qwo = np.array([3.5, 42, -1])
-    # pref = np.array([1.2, -6])
-    # pref_qwo = np.array([3.5, -1])
-    # C_2_6 + C_3_6
+
     A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref,
                                                                                                           pref_qwo,
                                                                                                           criteria)
@@ -254,10 +239,4 @@ def run_rsm(pref, pref_qwo, criteria):
 
     return dct_out1
 
-# print(run_rsm(lista_kryteriow))
 
-# pref = np.array([1.2, 15, -5])
-# pref_qwo = np.array([3.5, 42, -1])
-# kryteria = ['Punkt','Marża [%]','Wkład własny [%]','Opinie[pkt. Max. 5]']
-
-# print(run_rsm(pref, pref_qwo, kryteria))
