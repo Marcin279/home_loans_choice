@@ -7,9 +7,9 @@ from numpy.linalg import norm
 import math
 
 from scipy.fft import dct
-from data_processing import *
+from src.data_processing import *
 import time
-import punkty_odniesienia as po
+import src.punkty_odniesienia as po
 
 
 # dane = pd.read_excel("dane.xlsx",'Arkusz3')
@@ -525,7 +525,7 @@ def run_sp_cs(pref, pref_qwo, criteria):
 
     for ele in A3:
         dct_out1[ele[0]] = ele[1:].tolist()
-        
+
     return dct_out1
     # print(len(dct_out1))
     

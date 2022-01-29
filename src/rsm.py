@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, Tuple, List, Union, Optional
 from copy import deepcopy
-import punkty_odniesienia as po
+import src.punkty_odniesienia as po
 
 
 class Point:

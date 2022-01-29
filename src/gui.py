@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import pandas as pd
 from typing import List, Tuple, Optional, Union, Dict
-import uta_star as uta_star
-import rsm as rsm
-import fuzzy_topsis as ftopsis
-import sp_cs as sp_cs
+import src.uta_star as uta_star
+import src.rsm as rsm
+import src.fuzzy_topsis as ftopsis
+import src.sp_cs as sp_cs
 
 
 kryteria = ["Marża", "Prowizja", "RRSO", "Koszt miesięczny", "Wkład własny", 'Opinie']
