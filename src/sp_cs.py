@@ -499,7 +499,6 @@ def run_sp_cs(criteria, quo=None):
         dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1], reverse=False))
     else:
         dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1], reverse=False))
-
     dct_out1 = {}
 
     for key in dct_out:
