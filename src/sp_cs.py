@@ -7,9 +7,9 @@ from numpy.linalg import norm
 import math
 
 from scipy.fft import dct
-from src.data_processing import *
+from data_processing import *
 import time
-import src.punkty_odniesienia as po
+import punkty_odniesienia as po
 
 
 # dane = pd.read_excel("dane.xlsx",'Arkusz3')
@@ -431,18 +431,23 @@ def fill_points(A1, A2, B0):
 lista_kryteriow = []
 
 
-def run_sp_cs(criteria, quo=None):
+def run_sp_cs(pref, pref_qwo, criteria):
     #
     global lista_kryteriow
     lista_kryteriow = criteria
     # pref = np.array([1.2, 15, -6])
     # pref_qwo = np.array([3.5, 42, -1])
-    pref = np.array([0, 0, 15])
-    pref_qwo = np.array([3, 4, 45])
+    # pref = np.array([0, 0, -5])
+    # pref_qwo = np.array([3, 4, -1])
     # C_2_6 + C_3_6
     A0, vec_ideal, A3, vec_anty_ideal, A1, idealny_A1, A2, idealny_A2, B0, flagi = po.wyznaczenie_zbiorow(pref,
                                                                                                           pref_qwo,
                                                                                                           criteria)
+    # print(len(A0))
+    # print(len(A1))
+    # print(len(A2))
+    # print(len(A3))
+    # print(len(B0))                                                                                                     
 
     A1_points, A2_points, B0_points = fill_points(A1, A2, B0)
 
@@ -502,16 +507,31 @@ def run_sp_cs(criteria, quo=None):
 
     dct_out1 = {}
 
+
+    for ele in A0:
+        dct_out1[ele[0]] = ele[1:].tolist()
+
+    for ele in A1:
+        dct_out1[ele[0]] = ele[1:].tolist()
+
     for key in dct_out:
         if len(key.cor) == 2:
             dct_out1[key.name] = [key.cor[0], key.cor[1]]
         elif len(key.cor) == 3:
             dct_out1[key.name] = [key.cor[0], key.cor[1], key.cor[2]]
 
-    # print(dct_out1)
+    for ele in A2:
+        dct_out1[ele[0]] = ele[1:].tolist()
+
+    for ele in A3:
+        dct_out1[ele[0]] = ele[1:].tolist()
+        
     return dct_out1
+    # print(len(dct_out1))
+    
 
 
-kryteria = ['Punkt', 'Marża [%]', 'Prowizja [%]', 'Wkład własny [%]']
 
-run_sp_cs(kryteria)
+# kryteria = ['Punkt', 'Marża [%]', 'Prowizja [%]', 'Opinie[pkt. Max. 5]']
+
+# run_sp_cs(kryteria)

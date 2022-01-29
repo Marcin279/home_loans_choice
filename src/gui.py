@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import pandas as pd
 from typing import List, Tuple, Optional, Union, Dict
-import src.uta_star as uta_star
-import src.rsm as rsm
-import src.fuzzy_topsis as ftopsis
-import src.sp_cs as sp_cs
+import uta_star as uta_star
+import rsm as rsm
+import fuzzy_topsis as ftopsis
+import sp_cs as sp_cs
 
 
 kryteria = ["Marża", "Prowizja", "RRSO", "Koszt miesięczny", "Wkład własny", 'Opinie']
@@ -757,7 +757,7 @@ class RankingCalculations:
                 crits.append(columns_names[i])
                 chosen_quo1.append(self.quo1[i])
                 chosen_quo2.append(self.quo2[i])
-        # self.spcs_result = sp_cs.run_rsm(chosen_quo1, chosen_quo2, crits)
+        self.spcs_result = sp_cs.run_sp_cs(chosen_quo1, chosen_quo2, crits)
 
     def run_rsm(self):
         if self.rsm_result != {}:

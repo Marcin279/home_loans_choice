@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, Tuple, List, Union, Optional
 from copy import deepcopy
-import src.punkty_odniesienia as po
+import punkty_odniesienia as po
 
 
 class Point:
@@ -210,6 +210,7 @@ def fill_points(A1, A2, B0):
 # Poniższa częśc kodu odpowiada za tworzenie rankingu
 # ranking jest zwracany w postaci List[Tuple(float, str')]
 # listy punktów od najlepszego do najgorszego
+
 def run_rsm(pref, pref_qwo, criteria):
     #
     global lista_kryteriow
@@ -233,15 +234,30 @@ def run_rsm(pref, pref_qwo, criteria):
 
     dct_out1 = {}
 
+    for ele in A0:
+        dct_out1[ele[0]] = ele[1:].tolist()
+
+    for ele in A1:
+        dct_out1[ele[0]] = ele[1:].tolist()
+
     for key in dct_out:
         if len(key.cor) == 2:
             dct_out1[key.name] = [key.cor[0], key.cor[1]]
         if len(key.cor) == 3:
             dct_out1[key.name] = [key.cor[0], key.cor[1], key.cor[2]]
+            
+    for ele in A2:
+        dct_out1[ele[0]] = ele[1:].tolist()
+
+    for ele in A3:
+        dct_out1[ele[0]] = ele[1:].tolist()
 
     return dct_out1
 
 # print(run_rsm(lista_kryteriow))
+
+# pref = np.array([1.2, 15, -5])
+# pref_qwo = np.array([3.5, 42, -1])
 # kryteria = ['Punkt','Marża [%]','Wkład własny [%]','Opinie[pkt. Max. 5]']
 
-# print(run_rsm(kryteria))
+# print(run_rsm(pref, pref_qwo, kryteria))
