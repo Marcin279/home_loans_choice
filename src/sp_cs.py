@@ -166,7 +166,7 @@ def odleglosc_od_prostej(u, A1_odc, A2_odc):
         if len(u.cor) == 3:
             b = b + np.array([0.0001, 0.0001, 0.0001])
         if len(u.cor) == 2:
-            b = b + np.array([0.0001, 0.0001, 0.0001])
+            b = b + np.array([0.0001, 0.0001])
     # normalized tangent vector
     d = np.divide(b - a, np.linalg.norm(b - a))
 
