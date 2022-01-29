@@ -14,6 +14,6 @@ i wpisujemy następująca komendę.
 - pip install requirements.txt
 
 ### Właczanie aplikacji
-Aplikacje włączamy z poziomu pliku main.py
+Aplikacje włączamy z poziomu pliku main.py</br>
 Instrukcje dotyczące obsługi gui znajdą się w dokumentacji
 
