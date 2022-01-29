@@ -1,0 +1,5 @@
+numpy==1.19.5
+matplotlib==3.4.1
+tk
+pandas==1.2.4
+python-math==0.0.1

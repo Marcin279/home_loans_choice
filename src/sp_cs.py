@@ -1,66 +1,9 @@
-from mpl_toolkits import mplot3d
-import pandas as pd
-# %matplotlib inline
 import numpy as np
-import matplotlib.pyplot as plt
 from numpy.linalg import norm
 import math
-
-from scipy.fft import dct
 from src.data_processing import *
-import time
 import src.punkty_odniesienia as po
 
-
-# dane = pd.read_excel("dane.xlsx",'Arkusz3')
-# marza = dane['Marża [%]'].tolist()
-# prowizja = dane['Prowizja [%]'].tolist()
-# rrso = dane['RRSO [%]'].tolist()
-
-# # A1 = ['N33','N34','N1','N26','N28','N27']
-# # A2 = ['N17','N49','N52','N21', 'N19','N17']
-# A1 = ['N33']
-# A2 = ['N49']
-
-# df_A1 = dane[dane['Punkt'].isin(A1)]
-
-# df_A2 = dane[dane['Punkt'].isin(A2)]
-
-# dane = dane[~dane["Punkt"].isin(A1)]
-
-# dane = dane[~dane["Punkt"].isin(A2)]
-
-# print(dane)
-# print(dane.columns)
-# A1_point = Point([7,3,9])
-# u = Point([10,15,13])
-# A2_point = Point([30,26,24])
-
-# A1_point = Point([10,19,21])
-# u = Point([15,22,30])
-# A2_point = Point([30,40,55])
-
-# A1_point = Point([21,19,10])
-# u = Point([30,22,15])
-# A2_point = Point([55,40,30])
-# x = 'Marża [%]'
-# z = 'Opinie[pkt. Max. 5]'
-# y = 'RRSO [%]'
-
-# A1_points = []
-
-# for row in df_A1.iterrows():
-#     A1_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
-
-# A2_points = []
-
-# for row in df_A2.iterrows():
-#     A2_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
-
-# B0_points = []
-
-# for row in dane.iterrows():
-#     B0_points.append(Point([row[1][z],row[1][y],row[1][x]],row[1]['Punkt']))
 
 class SP_CS:
     def __init__(self):
@@ -506,7 +449,6 @@ def run_sp_cs(pref, pref_qwo, criteria):
         dct_out = dict(sorted(dct_out.items(), key=lambda item: item[1], reverse=False))
     dct_out1 = {}
 
-
     for ele in A0:
         dct_out1[ele[0]] = ele[1:].tolist()
 
@@ -527,9 +469,6 @@ def run_sp_cs(pref, pref_qwo, criteria):
 
     return dct_out1
     # print(len(dct_out1))
-    
-
-
 
 # kryteria = ['Punkt', 'Marża [%]', 'Prowizja [%]', 'Opinie[pkt. Max. 5]']
 

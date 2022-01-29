@@ -1,6 +1,4 @@
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from typing import Dict, Tuple, List, Union, Optional
 from copy import deepcopy
 import src.punkty_odniesienia as po
