@@ -10,7 +10,7 @@
 
 ## Instalacja bibliotek
 Po pobraniu projektu z repozytorium w poziomu root'a włączamy terminal
-i wpisujemy następująca komendę.
+i wpisujemy następująca komendę.</br>
 `pip install requirements.txt`
 
 ### Właczanie aplikacji
