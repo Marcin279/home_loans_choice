@@ -11,7 +11,7 @@
 ## Instalacja bibliotek
 Po pobraniu projektu z repozytorium w poziomu root'a włączamy terminal
 i wpisujemy następująca komendę.
-- pip install requirements.txt
+`pip install requirements.txt`
 
 ### Właczanie aplikacji
 Aplikacje włączamy z poziomu pliku main.py</br>
