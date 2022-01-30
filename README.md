@@ -10,7 +10,7 @@
 
 ## Instalacja bibliotek
 Po pobraniu projektu z repozytorium w poziomu root'a włączamy terminal
-i wpisujemy następująca komendę.</br>
+i wpisujemy następująca komendę. Wersja pythona 3.7 lub wyższy</br>
 `pip install requirements.txt`
 
 ### Właczanie aplikacji
