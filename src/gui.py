@@ -10,73 +10,8 @@ import src.rsm as rsm
 import src.fuzzy_topsis as ftopsis
 import src.sp_cs as sp_cs
 
-
 kryteria = ["Marża", "Prowizja", "RRSO", "Koszt miesięczny", "Wkład własny", 'Opinie']
 metody = ["Topsis", "SP-CS", "RSM", "UTA"]
-
-
-class Kryteria:
-    marza = False
-    prowizja = False
-    RRSO = False
-    wklad_wlasny = False
-    kryt1 = False
-    kryt2 = False
-
-
-class Metody:
-    topsis = False
-    sp_cs = False
-    rsm = False
-    odniesienia = False
-
-
-class Point:
-    """
-    class representing Point
-    """
-
-    def __init__(self, marza=None, prowizja=None, RRSO=None, wklad_wlasny=None, kryt_1=None, kryt_2=None):
-        self.marza = marza
-        self.prowizja = prowizja
-        self.RRSO = RRSO
-        self.wklad_wlasny = wklad_wlasny
-        self.kryt_1 = kryt_1
-        self.kryt_2 = kryt_2
-
-        self.count = 0
-
-    def check_which_are_not_none(self):
-        tmp = [self.marza, self.prowizja, self.RRSO, self.wklad_wlasny, self.kryt_1, self.kryt_2]
-        return [elem for elem in tmp if elem is not None]
-
-    def __repr__(self):
-        tmp = self.check_which_are_not_none()
-        if len(tmp) == 3:
-            return f'{tmp[0]}, {tmp[1]}, {tmp[2]}'
-        elif len(tmp) == 2:
-            return f'{tmp[0]}, {tmp[1]}'
-        else:
-            return 'Error'
-
-
-def generete_data(dim3=False):
-    dct = {}
-    lst_name = [f'Point{i}' for i in range(10)]
-    if not dim3:
-        x = [np.random.randint(0, 20) for _ in range(10)]
-        y = [np.random.randint(0, 20) for _ in range(10)]
-
-        lst = [Point(x[i], y[i]) for i in range(len(x))]
-    else:
-        x = [np.random.randint(0, 20) for _ in range(10)]
-        y = [np.random.randint(0, 20) for _ in range(10)]
-        a = [np.random.randint(0, 20) for _ in range(10)]
-
-        lst = [Point(x[i], y[i], a[i]) for i in range(len(x))]
-    for i in range(len(lst)):
-        dct[lst_name[i]] = lst[i]
-    return dct
 
 
 class GuiDesignerApp:
@@ -474,8 +409,6 @@ class GuiDesignerApp:
             self.print_ranking(self.data_UTA)
             self.plot_values(self.data_UTA)
 
-        # chart.get_tk_widget().pack()
-
     def run(self):
         """
         Run application
@@ -507,78 +440,8 @@ class GuiDesignerApp:
         if no_of_crits != 0:
             df = pd.read_excel(io='dane.xlsx', sheet_name='Arkusz3', index_col=0, usecols=crits)
 
-            indexes = list(df.index)
-            values = list(df.values.tolist())
-            points = dict(zip(indexes, values))
-
-            # if no_of_crits == 1:
-            #     self.figure = self.plot_1d(points)
-            # elif no_of_crits == 2:
-            #     self.figure = self.plot_2d(points)
-            # elif no_of_crits == 3:
-            #     self.figure = self.plot_3d(points)
-            #     pass
         else:
             pass
-
-    # def plot_1d(self, data: Dict):
-    #
-    #     x = data.values()
-    #     y = [0] * len(x)
-    #
-    #     figure1 = plt.Figure(figsize=(2, 4), dpi=100)
-    #     fig = figure1.add_subplot(111)
-    #     canvas = FigureCanvasTkAgg(figure1, master=self.labelframe3)
-    #     canvas.get_tk_widget().pack(fill='both')
-    #
-    #     fig.grid()
-    #     fig.plot(x, y, 'o')
-    #     canvas.draw()
-    #
-    #     fig.clear()
-    #     plt.close('all')
-
-    # def plot_2d(self, data: Dict):
-    #
-    #     x = [tab[0] for tab in list(data.values())]
-    #     y = [tab[1] for tab in list(data.values())]
-    #
-    #     figure1 = plt.Figure(figsize=(2, 4), dpi=100)
-    #     fig = figure1.add_subplot(111)
-    #     canvas = FigureCanvasTkAgg(figure1, master=self.labelframe3)
-    #     canvas.get_tk_widget().pack(fill='both')
-    #
-    #     fig.grid()
-    #     fig.plot(x, y, 'o')
-    #     canvas.draw()
-    #
-    #     fig.clear()
-    #     plt.close('all')
-
-    # def plot_3d(self, data: Dict):
-    #     """
-    #     Plot 3 dimensional chart
-    #     :param data:
-    #     :return:
-    #     """
-    #     x = [tab[0] for tab in list(data.values())]
-    #     y = [tab[1] for tab in list(data.values())]
-    #     z = [tab[2] for tab in list(data.values())]
-    #
-    #     figure1 = plt.Figure(figsize=(2, 3), dpi=100)
-    #     fig = figure1.add_subplot(111)
-    #     fig.axes(projection="3d")
-    #     canvas = FigureCanvasTkAgg(figure1, master=self.labelframe3)
-    #     canvas.get_tk_widget().pack(fill='both')
-    #
-    #     fig.grid()
-    #     for i in range(len(x)):
-    #         fig.scatter(x[i], y[i], z[i], color='b')
-    #         # fig.text(x[i], y[i], z[i], (key_lst[i]), size=8, zorder=1)
-    #     canvas.draw()
-    #
-    #     fig.clear()
-    #     plt.close('all')
 
     def plot_2d(self, data: Dict[str, List]):
         """
@@ -594,7 +457,6 @@ class GuiDesignerApp:
         ax1.scatter(x, y)
         for key, coords in data.items():
             ax1.annotate(key, (coords[0], coords[1]))
-        figure1.show()
         return figure1
 
     def plot_3d(self, data: Dict[str, List]):
@@ -615,7 +477,6 @@ class GuiDesignerApp:
             ax1.scatter(x[i], y[i], z[i], color='b')
             ax1.text(x[i], y[i], z[i], (key_lst[i]), size=8, zorder=1)
 
-        figure1.show()
         return figure1
 
     def plot_values(self, data):
@@ -767,7 +628,6 @@ class RankingCalculations:
             self.uta_result = {}
         columns_names = {0: 'Marża [%]', 1: 'Prowizja [%]', 2: 'RRSO [%]', 3: 'Koszt miesięczny [PLN]',
                          4: 'Wkład własny [%]', 5: 'Opinie[pkt. Max. 5]'}
-        # crits = ['Punkt']
         crits = []
         for i in range(len(self.chosen_criteria)):
             if self.chosen_criteria[i]:
@@ -783,6 +643,3 @@ class RankingCalculations:
             self.run_rsm()
         if self.chosen_methods[3] == 1:
             self.run_uta()
-
-    def reset_selfvals(self):
-        pass

@@ -148,9 +148,3 @@ def run(active_crits, path='dane.xlsx', exel_data_sheet='Arkusz3'):
             sorted_ranking[w] = crits_values
 
     return sorted_ranking
-
-
-if __name__ == '__main__':
-    crits = ['Opinie[pkt. Max. 5]', 'Marża [%]']
-    path = 'dane.xlsx'
-    print(run(crits))
