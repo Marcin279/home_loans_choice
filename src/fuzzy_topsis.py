@@ -1,3 +1,8 @@
+"""
+Authors:
+- Mateusz Zagórski
+"""
+
 import numpy as np
 import src.punkty_odniesienia as po
 

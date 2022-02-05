@@ -1,3 +1,10 @@
+"""
+Authors:
+- Marcin Biela
+- Michał Spinczyk
+- Jakub Sarata
+"""
+
 import numpy as np
 from typing import Dict, Tuple, List, Union, Optional
 from copy import deepcopy

@@ -1,3 +1,9 @@
+"""
+Authors:
+- Michał Spinczyk
+- Jakub Sarata
+"""
+
 import numpy as np
 from numpy.linalg import norm
 import math
@@ -21,14 +27,11 @@ def oblicz_d(A1_point, A2_point):
         d_ = (A2_point.cor[i] - A1_point.cor[i]) / 2
         d.append(d_)
     if A1_point.len == 2:
-        # print(min(d))
         return min(d)
     else:
         d1 = min(d)
-        # d1_id = d.index(d1)
         d.remove(d1)
         d2 = min(d)
-        # print(d1,d2)
         return d1, d2
 
 
