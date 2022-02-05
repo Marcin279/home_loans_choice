@@ -36,7 +36,6 @@ def check(u, point_A1, point_A2) -> bool:
 
     Return: bool
     """
-
     if len(u.cor) == 2:
         if 'Opinie[pkt. Max. 5]' not in lista_kryteriow:
             if ((u.cor[0] >= point_A1.cor[0]) and (u.cor[0] <= point_A2.cor[0])) and (
@@ -235,7 +234,7 @@ def run_rsm(pref, pref_qwo, criteria):
             dct_out1[key.name] = [key.cor[0], key.cor[1]]
         if len(key.cor) == 3:
             dct_out1[key.name] = [key.cor[0], key.cor[1], key.cor[2]]
-            
+
     for ele in A2:
         dct_out1[ele[0]] = ele[1:].tolist()
 
@@ -243,5 +242,3 @@ def run_rsm(pref, pref_qwo, criteria):
         dct_out1[ele[0]] = ele[1:].tolist()
 
     return dct_out1
-
-
