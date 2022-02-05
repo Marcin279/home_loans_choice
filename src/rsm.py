@@ -36,7 +36,7 @@ def check(u, point_A1, point_A2) -> bool:
 
     Return: bool
     """
-    """ Zmienić warunki w przypadku maksymalizacji!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! """
+
     if len(u.cor) == 2:
         if 'Opinie[pkt. Max. 5]' not in lista_kryteriow:
             if ((u.cor[0] >= point_A1.cor[0]) and (u.cor[0] <= point_A2.cor[0])) and (
@@ -67,7 +67,7 @@ def check(u, point_A1, point_A2) -> bool:
                 return False
 
 
-def oblicz_P_lub_V(A1_point: Tuple, A2_point: Tuple, u: Tuple) -> Tuple:
+def oblicz_P_lub_V(A1_point: Point, A2_point: Point, u: Point) -> Tuple:
     """
     Funkcja obliczająca pole pomiędzy A1_point, A2_point i sprawdza czy punkt ze zbioru status-quo znajduje się w
     obrębie tego prostokąta.
@@ -139,7 +139,7 @@ def check_if_weight_sum_to_1(A1, A2, u):
     return suma
 
 
-def distance(u: Tuple, A) -> float:
+def distance(u: Point, A) -> float:
     """
     Funkcja obliczająca dystans z punktu u do A
     params: u - Tuple(int, int)
@@ -154,7 +154,7 @@ def distance(u: Tuple, A) -> float:
     return d
 
 
-def skoring(u, A1, A2) -> Tuple:
+def skoring(u, A1, A2) -> int:
     """
     Funkcja wyliczajaca wartość funkcji skoringowej dla danego
     punktu u ze zbioru status quo
